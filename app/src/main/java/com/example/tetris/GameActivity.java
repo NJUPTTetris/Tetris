@@ -12,6 +12,7 @@ import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import java.util.Random;
 
@@ -44,30 +45,37 @@ public class GameActivity extends AppCompatActivity {
         switch (boxType) {
             case 0:
                 boxPaint.setColor(getResources().getColor(R.color.red));
+                boxPaint.setColor(ContextCompat.getColor(this, R.color.red));
                 boxes = new Point[]{new Point(4, 0), new Point(5, 0), new Point(4, 1), new Point(5, 1)};
                 break;
             case 1:
                 boxPaint.setColor(getResources().getColor(R.color.orange));
+                boxPaint.setColor(ContextCompat.getColor(this, R.color.orange));
                 boxes = new Point[]{new Point(4, 1), new Point(5, 0), new Point(3, 1), new Point(5, 1)};
                 break;
             case 2:
                 boxPaint.setColor(getResources().getColor(R.color.yellow));
+                boxPaint.setColor(ContextCompat.getColor(this, R.color.yellow));
                 boxes = new Point[]{new Point(4, 1), new Point(3, 0), new Point(3, 1), new Point(5, 1)};
                 break;
             case 3:
                 boxPaint.setColor(getResources().getColor(R.color.green));
+                boxPaint.setColor(ContextCompat.getColor(this, R.color.green));
                 boxes = new Point[]{new Point(4, 1), new Point(4, 0), new Point(3, 1), new Point(5, 1)};
                 break;
             case 4:
                 boxPaint.setColor(getResources().getColor(R.color.cyan));
+                boxPaint.setColor(ContextCompat.getColor(this, R.color.cyan));
                 boxes = new Point[]{new Point(4, 0), new Point(3, 0), new Point(5, 0), new Point(6, 0)};
                 break;
             case 5:
                 boxPaint.setColor(getResources().getColor(R.color.blue));
+                boxPaint.setColor(ContextCompat.getColor(this, R.color.blue));
                 boxes = new Point[]{new Point(4, 1), new Point(4, 0), new Point(5, 1), new Point(5, 2)};
                 break;
             case 6:
                 boxPaint.setColor(getResources().getColor(R.color.purple));
+                boxPaint.setColor(ContextCompat.getColor(this, R.color.purple));
                 boxes = new Point[]{new Point(5, 1), new Point(5, 0), new Point(4, 1), new Point(4, 2)};
                 break;
         }
