@@ -74,7 +74,6 @@ public class GameActivity extends AppCompatActivity {
         }
     }
 
-
     public void initListener() {//初始化监听
         findViewById(R.id.arrow_left).setOnClickListener(v -> {
             Animation(v); // 调用封装的动画函数
@@ -97,6 +96,7 @@ public class GameActivity extends AppCompatActivity {
         findViewById(R.id.btn_restart).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                recreate();
             }
         });
         findViewById(R.id.btn_stop).setOnClickListener(new View.OnClickListener() {
@@ -126,6 +126,7 @@ public class GameActivity extends AppCompatActivity {
         }
         view.invalidate();//调用重绘
         return true;
+
     }
 
     public boolean checkBoundary(int x, int y) {//边界判断
