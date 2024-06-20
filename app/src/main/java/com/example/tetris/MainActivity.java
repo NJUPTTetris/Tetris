@@ -9,7 +9,6 @@ import android.view.View;
 import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity {
-    private Button startButton;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -17,7 +16,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         // 找到按钮
-        startButton = findViewById(R.id.start_button);
+        Button startButton = findViewById(R.id.start_button);
         // 设置点击事件监听器
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override

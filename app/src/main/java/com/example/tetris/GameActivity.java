@@ -116,7 +116,6 @@ public class GameActivity extends AppCompatActivity {
     }
 
     public boolean checkBoundary(int x, int y) {//边界判断
-        return (x < 0 || y < 0 || x >= maps.length || y >= maps[0].length);
         return (x < 0 || y < 0 || x >= maps.length || y >= maps[0].length|| maps[x][y]);
     }
 
