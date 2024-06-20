@@ -15,6 +15,7 @@ import java.util.Random;
 public class GameActivity extends AppCompatActivity {
     int xWidth, xHeight;//游戏区域宽度高度
     View view;//游戏区域控件
+    Paint mapPaint;//地图画笔
     Paint linePaint;//初始化辅助线画笔
     Paint boxPaint;//初始化方块画笔
     boolean[][] maps;//地图
@@ -75,6 +76,11 @@ public class GameActivity extends AppCompatActivity {
         findViewById(R.id.arrow_right).setOnClickListener(v -> move(1, 0));
         findViewById(R.id.arrow_rotate).setOnClickListener(v -> rotate());
         findViewById(R.id.arrow_down).setOnClickListener(v -> move(0, 1));
+        findViewById(R.id.arrow_down).setOnClickListener(v -> {
+            while(moveBottom()){
+                continue;
+            }//优化加速
+        });
         findViewById(R.id.btn_restart).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -111,6 +117,7 @@ public class GameActivity extends AppCompatActivity {
 
     public boolean checkBoundary(int x, int y) {//边界判断
         return (x < 0 || y < 0 || x >= maps.length || y >= maps[0].length);
+        return (x < 0 || y < 0 || x >= maps.length || y >= maps[0].length|| maps[x][y]);
     }
 
     public void rotate() {//顺时针旋转90
@@ -144,6 +151,10 @@ public class GameActivity extends AppCompatActivity {
         linePaint.setStrokeWidth(3);
         linePaint.setAntiAlias(true);
 
+        mapPaint = new Paint();
+        mapPaint.setColor(0x50000000);
+        mapPaint.setAntiAlias(true);
+
         FrameLayout layoutGame = findViewById(R.id.layoutGame);//得到父容器
         view = new View(this) {
             @Override
@@ -158,6 +169,14 @@ public class GameActivity extends AppCompatActivity {
                 for (Point box : boxes) {//方块绘制
                     canvas.drawRect(box.x * boxSize, box.y * boxSize, box.x * boxSize + boxSize, box.y * boxSize + boxSize, boxPaint);
                 }
+                for (int x = 0; x < maps.length; x++) {
+                    for (int y = 0; y < maps[x].length; y++) {//绘制地图
+                        if (maps[x][y])
+                            canvas.drawRect(x * boxSize, y * boxSize,
+                                    x * boxSize + boxSize, y * boxSize + boxSize, mapPaint);
+                    }
+                }
+
             }
         };
         view.setLayoutParams(new FrameLayout.LayoutParams(xWidth, xHeight));
