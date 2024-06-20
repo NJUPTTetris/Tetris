@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">Tetris</string>
+    <string name="start">Start</string>
+    <string name="tetris">Tetris</string>
+    <string name="score">Score</string>
+    <string name="highest">Highest</string>
+    <string name="highest_score">9999</string>
+    <string name="current">Current</string>
+    <string name="current_score">0</string>
+    <string name="restart">Restart</string>
+    <string name="next">Next</string>
+    <string name="stop">Stop</string>
 </resources>
