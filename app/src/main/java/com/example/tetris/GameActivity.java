@@ -36,30 +36,39 @@ public class GameActivity extends AppCompatActivity {
     public void newBoxes() {//新的方块
         Random random = new Random();
         boxType = random.nextInt(TUBE);
+        boxPaint = new Paint();//初始化方块画笔
         switch (boxType) {
             case 0:
+                boxPaint.setColor(getResources().getColor(R.color.red));
                 boxes = new Point[]{new Point(4, 0), new Point(5, 0), new Point(4, 1), new Point(5, 1)};
                 break;
             case 1:
+                boxPaint.setColor(getResources().getColor(R.color.orange));
                 boxes = new Point[]{new Point(4, 1), new Point(5, 0), new Point(3, 1), new Point(5, 1)};
                 break;
             case 2:
+                boxPaint.setColor(getResources().getColor(R.color.yellow));
                 boxes = new Point[]{new Point(4, 1), new Point(3, 0), new Point(3, 1), new Point(5, 1)};
                 break;
             case 3:
+                boxPaint.setColor(getResources().getColor(R.color.green));
                 boxes = new Point[]{new Point(4, 1), new Point(4, 0), new Point(3, 1), new Point(5, 1)};
                 break;
             case 4:
+                boxPaint.setColor(getResources().getColor(R.color.cyan));
                 boxes = new Point[]{new Point(4, 0), new Point(3, 0), new Point(5, 0), new Point(6, 0)};
                 break;
             case 5:
+                boxPaint.setColor(getResources().getColor(R.color.blue));
                 boxes = new Point[]{new Point(4, 1), new Point(4, 0), new Point(5, 1), new Point(5, 2)};
                 break;
             case 6:
+                boxPaint.setColor(getResources().getColor(R.color.purple));
                 boxes = new Point[]{new Point(5, 1), new Point(5, 0), new Point(4, 1), new Point(4, 2)};
                 break;
         }
     }
+
 
     public void initListener() {//初始化监听
         findViewById(R.id.arrow_left).setOnClickListener(v -> move(-1, 0));
@@ -134,9 +143,6 @@ public class GameActivity extends AppCompatActivity {
         linePaint.setColor(0xff666666);
         linePaint.setStrokeWidth(3);
         linePaint.setAntiAlias(true);
-
-        boxPaint = new Paint();//初始化方块画笔
-        boxPaint.setColor(0xff000000);
 
         FrameLayout layoutGame = findViewById(R.id.layoutGame);//得到父容器
         view = new View(this) {
