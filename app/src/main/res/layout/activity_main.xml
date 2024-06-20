@@ -1,18 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MainActivity">
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
+    android:layout_height="match_parent">
+<!--    android:background="@drawable/background">&lt;!&ndash;    背景图后续可替换&ndash;&gt;-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="110dp">
+        </View>
+        <TextView
+            android:id="@+id/name_textview"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:gravity="center_horizontal"
+            android:textSize="100dp"
+            android:text="Tetris" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="250dp">
+        </View>
+        <Button
+            android:id="@+id/start_button"
+            android:layout_width="140dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textSize="40dp"
+            android:text="Start" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="50dp">
+        </View>
+<!--        <LinearLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginLeft="30dp"-->
+<!--            android:layout_marginRight="30dp"-->
+<!--            android:orientation="horizontal">-->
+<!--            <Button-->
+<!--                android:id="@+id/speed_button"-->
+<!--                android:layout_width="140dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_gravity="center"-->
+<!--                android:textSize="30dp"-->
+<!--                android:text="Speed" />-->
+<!--            <Button-->
+<!--                android:id="@+id/rule_button"-->
+<!--                android:layout_width="140dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_gravity="center"-->
+<!--                android:layout_marginLeft="70dp"-->
+<!--                android:text="Rule"-->
+<!--                android:textSize="30dp" />-->
+<!--        </LinearLayout>-->
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
