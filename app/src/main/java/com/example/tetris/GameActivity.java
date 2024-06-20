@@ -1,5 +1,8 @@
 package com.example.tetris;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
@@ -76,7 +79,20 @@ public class GameActivity extends AppCompatActivity {
         findViewById(R.id.arrow_right).setOnClickListener(v -> move(1, 0));
         findViewById(R.id.arrow_rotate).setOnClickListener(v -> rotate());
         findViewById(R.id.arrow_down).setOnClickListener(v -> move(0, 1));
+        findViewById(R.id.arrow_left).setOnClickListener(v -> {
+            Animation(v); // 调用封装的动画函数
+            move(-1, 0);
+        });
+        findViewById(R.id.arrow_right).setOnClickListener(v -> {
+            Animation(v);
+            move(1, 0);
+        });
+        findViewById(R.id.arrow_rotate).setOnClickListener(v -> {
+            Animation(v);
+            rotate();
+        });
         findViewById(R.id.arrow_down).setOnClickListener(v -> {
+            Animation(v);
             while(moveBottom()){
                 continue;
             }//优化加速
@@ -180,5 +196,37 @@ public class GameActivity extends AppCompatActivity {
         };
         view.setLayoutParams(new FrameLayout.LayoutParams(xWidth, xHeight));
         layoutGame.addView(view);//添加进父容器
+    }
+
+    private void Animation(final View v) {
+        // 创建一个按钮缩小的属性动画，从1倍到0.8倍大小
+        ObjectAnimator scaleXAnimator = ObjectAnimator.ofFloat(v, "scaleX", 1f, 0.8f);
+        ObjectAnimator scaleYAnimator = ObjectAnimator.ofFloat(v, "scaleY", 1f, 0.8f);
+
+        // 设置动画持续时间，单位毫秒
+        scaleXAnimator.setDuration(100); // 缩小动画时间 0.25秒
+        scaleYAnimator.setDuration(100); // 缩小动画时间 0.25秒
+
+        // 添加一个监听器，在缩小动画完成后启动放大动画
+        scaleXAnimator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                // 创建一个按钮放大的属性动画，从0.8倍到1倍大小
+                ObjectAnimator scaleXAnimatorReverse = ObjectAnimator.ofFloat(v, "scaleX", 0.8f, 1f);
+                ObjectAnimator scaleYAnimatorReverse = ObjectAnimator.ofFloat(v, "scaleY", 0.8f, 1f);
+
+                // 设置动画持续时间，单位毫秒
+                scaleXAnimatorReverse.setDuration(100); // 放大动画时间 0.25秒
+                scaleYAnimatorReverse.setDuration(100); // 放大动画时间 0.25秒
+
+                // 同时播放X和Y方向的放大动画
+                scaleXAnimatorReverse.start();
+                scaleYAnimatorReverse.start();
+            }
+        });
+
+        // 启动缩小动画
+        scaleXAnimator.start();
+        scaleYAnimator.start();
     }
 }
