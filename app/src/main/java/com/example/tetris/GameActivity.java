@@ -44,37 +44,30 @@ public class GameActivity extends AppCompatActivity {
         boxPaint = new Paint();//初始化方块画笔
         switch (boxType) {
             case 0:
-                boxPaint.setColor(getResources().getColor(R.color.red));
                 boxPaint.setColor(ContextCompat.getColor(this, R.color.red));
                 boxes = new Point[]{new Point(4, 0), new Point(5, 0), new Point(4, 1), new Point(5, 1)};
                 break;
             case 1:
-                boxPaint.setColor(getResources().getColor(R.color.orange));
                 boxPaint.setColor(ContextCompat.getColor(this, R.color.orange));
                 boxes = new Point[]{new Point(4, 1), new Point(5, 0), new Point(3, 1), new Point(5, 1)};
                 break;
             case 2:
-                boxPaint.setColor(getResources().getColor(R.color.yellow));
                 boxPaint.setColor(ContextCompat.getColor(this, R.color.yellow));
                 boxes = new Point[]{new Point(4, 1), new Point(3, 0), new Point(3, 1), new Point(5, 1)};
                 break;
             case 3:
-                boxPaint.setColor(getResources().getColor(R.color.green));
                 boxPaint.setColor(ContextCompat.getColor(this, R.color.green));
                 boxes = new Point[]{new Point(4, 1), new Point(4, 0), new Point(3, 1), new Point(5, 1)};
                 break;
             case 4:
-                boxPaint.setColor(getResources().getColor(R.color.cyan));
                 boxPaint.setColor(ContextCompat.getColor(this, R.color.cyan));
                 boxes = new Point[]{new Point(4, 0), new Point(3, 0), new Point(5, 0), new Point(6, 0)};
                 break;
             case 5:
-                boxPaint.setColor(getResources().getColor(R.color.blue));
                 boxPaint.setColor(ContextCompat.getColor(this, R.color.blue));
                 boxes = new Point[]{new Point(4, 1), new Point(4, 0), new Point(5, 1), new Point(5, 2)};
                 break;
             case 6:
-                boxPaint.setColor(getResources().getColor(R.color.purple));
                 boxPaint.setColor(ContextCompat.getColor(this, R.color.purple));
                 boxes = new Point[]{new Point(5, 1), new Point(5, 0), new Point(4, 1), new Point(4, 2)};
                 break;
@@ -83,10 +76,6 @@ public class GameActivity extends AppCompatActivity {
 
 
     public void initListener() {//初始化监听
-        findViewById(R.id.arrow_left).setOnClickListener(v -> move(-1, 0));
-        findViewById(R.id.arrow_right).setOnClickListener(v -> move(1, 0));
-        findViewById(R.id.arrow_rotate).setOnClickListener(v -> rotate());
-        findViewById(R.id.arrow_down).setOnClickListener(v -> move(0, 1));
         findViewById(R.id.arrow_left).setOnClickListener(v -> {
             Animation(v); // 调用封装的动画函数
             move(-1, 0);
