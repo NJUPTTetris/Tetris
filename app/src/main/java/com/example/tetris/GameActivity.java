@@ -3,6 +3,7 @@ package com.example.tetris;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -21,7 +22,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 
 import java.util.Random;
 
@@ -54,19 +54,20 @@ public class GameActivity extends AppCompatActivity {
     private Handler autoMoveHandler = new Handler(); // 用于自动下落的Handler
     private MediaPlayer bgMediaPlayer; // 背景音乐的 MediaPlayer
     private MediaPlayer soundEffectPlayer; // 短暂音效的 MediaPlayer
-    int[] boxColors = {
-            Color.parseColor("#C62828"), // 红色
+    int[] boxColors = {Color.parseColor("#C62828"), // 红色
             Color.parseColor("#D84315"), // 橙色
-            Color.parseColor("#6990D5"), // 蓝色
+            Color.parseColor("#F9A825"), // 黄色
             Color.parseColor("#558B2F"), // 绿色
             Color.parseColor("#00695C"), // 青色
-            Color.parseColor("#F9A825"), // 黄色
+            Color.parseColor("#6990D5"), // 蓝色
             Color.parseColor("#6A1B9A")  // 紫色
     };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
+
         // 获取当前分数的 TextView 并设置初始分数
         txtCurrentScore = findViewById(R.id.current_score);
         txtCurrentScore.setText(String.valueOf(score)); // 设置初始分数
@@ -78,14 +79,13 @@ public class GameActivity extends AppCompatActivity {
         updateScoreDisplay();
         updateHighScoreDisplay();
 
-        initData();
-
-        initView();
-        newBoxes();
+        initData();//初始数据
+        initView();//基本视图实现
+        newBoxes();//新方块生成
         initListener();
         // 确保游戏开始时自动下落
         onResume();
-        playBackgroundMusic();
+        playBackgroundMusic();//背景音乐
     }
 
     //自动下降
@@ -113,69 +113,67 @@ public class GameActivity extends AppCompatActivity {
         isPaused = true; // 暂停游戏
         autoMoveHandler.removeCallbacks(autoMoveRunnable); // 移除自动下落的Runnable
     }
+
     public void newBoxes() { //生成一个新的随机方块
-        if(nextboxes==null){
+        if (nextboxes == null) {
             nextBoxes();
         }
-        boxes=nextboxes;
-        boxType=nextboxType;
+        boxes = nextboxes;
+        boxType = nextboxType;
         nextBoxes();
         // 获取ImageView并设置新的Bitmap
         ImageView nextBlockView = findViewById(R.id.next_image);
         Bitmap nextBlockBitmap = drawNextBlock(nextboxes);
         nextBlockView.setImageBitmap(nextBlockBitmap);
     }
-    public void nextBoxes(){
-        Random random=new Random();
-        nextboxType=random.nextInt(TUBE);
-        switch (nextboxType){
+
+    public void nextBoxes() {
+        Random random = new Random();
+        nextboxType = random.nextInt(TUBE);
+        switch (nextboxType) {
             case 0://粉碎男孩 Smashboy
-                nextboxes=new Point[]{new Point(4, 0), new Point(5, 0), new Point(4, 1), new Point(5, 1)};
+                nextboxes = new Point[]{new Point(4, 0), new Point(5, 0), new Point(4, 1), new Point(5, 1)};
                 break;
             case 1://橘色瑞克 Orange Ricky
-                nextboxes= new Point[]{new Point(4, 1), new Point(5, 0), new Point(3, 1), new Point(5, 1)};
+                nextboxes = new Point[]{new Point(5, 1), new Point(6, 0), new Point(4, 1), new Point(6, 1)};
                 break;
-            case 2://蓝色瑞克 Blue Ricky
-                nextboxes= new Point[]{new Point(4, 1), new Point(3, 0), new Point(3, 1), new Point(5, 1)};
+            case 2://罗德岛Z Rhode Island Z
+                nextboxes = new Point[]{new Point(5, 1), new Point(5, 0), new Point(6, 0), new Point(4, 1)};
                 break;
             case 3://小T Teewee
-                nextboxes= new Point[]{new Point(4, 1), new Point(4, 0), new Point(3, 1), new Point(5, 1)};
+                nextboxes = new Point[]{new Point(5, 1), new Point(5, 0), new Point(4, 1), new Point(6, 1)};
                 break;
             case 4://英雄 Hero
-                nextboxes= new Point[]{new Point(4, 0), new Point(3, 0), new Point(5, 0), new Point(6, 0)};
+                nextboxes = new Point[]{new Point(4, 0), new Point(3, 0), new Point(5, 0), new Point(6, 0)};
                 break;
-            case 5://罗德岛Z Rhode Island Z
-                nextboxes= new Point[]{new Point(4, 1), new Point(4, 0), new Point(5, 0), new Point(3, 1)};
+            case 5://蓝色瑞克 Blue Ricky
+                nextboxes = new Point[]{new Point(5, 1), new Point(4, 0), new Point(4, 1), new Point(6, 1)};
                 break;
             case 6://克里夫蘭Z Cleveland Z
-                nextboxes= new Point[]{new Point(4, 1), new Point(4, 0), new Point(3, 0), new Point(5, 1)};
+                nextboxes = new Point[]{new Point(5, 1), new Point(5, 0), new Point(4, 0), new Point(6, 1)};
                 break;
         }
         boxPaint.setColor(boxColors[boxType]);
         boxColor = boxColors[nextboxType];
     }
+
     private Bitmap drawNextBlock(Point[] nextboxes) {
         // 创建一个与ImageView相同大小的Bitmap
-        Bitmap bitmap = Bitmap.createBitmap(140, 100, Bitmap.Config.ARGB_8888);
+        Bitmap bitmap = Bitmap.createBitmap((int) (80 * getResources().getDisplayMetrics().density), (int) (80 * getResources().getDisplayMetrics().density), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
         // 设置方块颜色
         Paint nextboxPaint = new Paint();
         // 使用存储的颜色
         nextboxPaint.setColor(boxColor);
         // 计算方块大小
-        int boxSize = 18;
+        int boxSize = (int) (20 * getResources().getDisplayMetrics().density);
         // 在Canvas上绘制方块
         for (Point box : nextboxes) {
-            canvas.drawRect(
-                    box.x * boxSize,
-                    box.y * boxSize,
-                    (box.x + 1) * boxSize,
-                    (box.y + 1) * boxSize,
-                    nextboxPaint
-            );
+            canvas.drawRect((box.x - 3) * boxSize, box.y * boxSize, (box.x - 2) * boxSize, (box.y + 1) * boxSize, nextboxPaint);
         }
         return bitmap;
     }
+
     public void initListener() {//初始化监听
         findViewById(R.id.arrow_left).setOnClickListener(v -> {
             Animation(v); // 调用封装的动画函数
@@ -208,6 +206,7 @@ public class GameActivity extends AppCompatActivity {
         });
         final Button btnStop = findViewById(R.id.btn_stop);
         findViewById(R.id.btn_stop).setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("SetTextI18n")
             @Override
             public void onClick(View v) {
                 if (bgMediaPlayer != null && bgMediaPlayer.isPlaying()) {
@@ -230,20 +229,19 @@ public class GameActivity extends AppCompatActivity {
     //下落
     public boolean moveBottom() {
         //1.移动成功 不作处理
-        if (move(0, 1))
-            return true;
+        if (move(0, 1)) return true;
         //2.移动失败 堆积处理
         for (Point box : boxes)
             maps[box.x][box.y] = true;
         //3.消行处理
-        int lines=clearLine();
+        int lines = clearLine();
         //4.加分
         addScore(lines);
         //5.生成新的方块
         newBoxes();
         //6.游戏结束判断，调用重绘
         view.invalidate();
-        isOver=checkOver();
+        isOver = checkOver();
         return false;
     }
 
@@ -297,30 +295,31 @@ public class GameActivity extends AppCompatActivity {
         mapPaint = new Paint();
         mapPaint.setColor(0x50000000);
         mapPaint.setAntiAlias(true);
-        boxPaint=new Paint();//初始化方块画笔
+
+        boxPaint = new Paint();//初始化方块画笔
         boxPaint.setColor(0xff000000);
+
         FrameLayout layoutGame = findViewById(R.id.layoutGame);//得到父容器
         view = new View(this) {
             @Override
             protected void onDraw(@NonNull Canvas canvas) {//重写游戏区域绘制
                 super.onDraw(canvas);
-                for (int x = 0; x < maps.length; x++)//地图辅助线
+                //地图辅助线
+                for (int x = 0; x < maps.length; x++)
                     canvas.drawLine(x * boxSize, 0, x * boxSize, view.getHeight(), linePaint);
-
                 for (int y = 0; y < maps[0].length; y++)
                     canvas.drawLine(0, y * boxSize, view.getWidth(), y * boxSize, linePaint);
-
-                for (Point box : boxes) {//方块绘制
+                //方块绘制
+                for (Point box : boxes) {
                     canvas.drawRect(box.x * boxSize, box.y * boxSize, box.x * boxSize + boxSize, box.y * boxSize + boxSize, boxPaint);
                 }
+                //绘制地图
                 for (int x = 0; x < maps.length; x++) {
-                    for (int y = 0; y < maps[x].length; y++) {//绘制地图
+                    for (int y = 0; y < maps[x].length; y++) {
                         if (maps[x][y])
-                            canvas.drawRect(x * boxSize, y * boxSize,
-                                    x * boxSize + boxSize, y * boxSize + boxSize, mapPaint);
+                            canvas.drawRect(x * boxSize, y * boxSize, x * boxSize + boxSize, y * boxSize + boxSize, mapPaint);
                     }
                 }
-
             }
         };
         view.setLayoutParams(new FrameLayout.LayoutParams(xWidth, xHeight));
@@ -358,6 +357,7 @@ public class GameActivity extends AppCompatActivity {
         scaleXAnimator.start();
         scaleYAnimator.start();
     }
+
     private void playSound(int soundResId) {
         // 播放音效的方法
         if (soundEffectPlayer != null) {
@@ -377,11 +377,11 @@ public class GameActivity extends AppCompatActivity {
     }
 
     //消行处理
-    public int clearLine(){
-        int lines=0;
-        for (int y = maps[0].length-1; y>0; y--){
+    public int clearLine() {
+        int lines = 0;
+        for (int y = maps[0].length - 1; y > 0; y--) {
             // 消行判断
-            if(checkLine(y)) {
+            if (checkLine(y)) {
                 deleteLine(y);
                 //从消掉的那一行重新遍历
                 y++;
@@ -390,39 +390,40 @@ public class GameActivity extends AppCompatActivity {
         }
         return lines;
     }
-    public boolean checkLine(int y){
-//        有一个不为true,则该行不能消除
-        for(int x=0;x<maps.length;x++){
-            if(!maps[x][y])
-                return false;
+
+    public boolean checkLine(int y) {
+        //有一个不为true,则该行不能消除
+        for (boolean[] map : maps) {
+            if (!map[y]) return false;
         }
         return true;
     }
+
     //执行消行
     public void deleteLine(int dy) {
-        for (int y = maps[0].length-1; y>0; y--)
+        for (int y = dy; y > 0; y--) {
             for (int x = 0; x < maps.length; x++) {
-                maps[x][y] = maps[x][y-1];
+                maps[x][y] = maps[x][y - 1];
             }
+        }
     }
 
     //加分
-    public void addScore(int lines){
-        if(lines==0)
-            return;
-        int add=lines+(lines-1);
-        score+=add;
+    public void addScore(int lines) {
+        if (lines == 0) return;
+        int add = lines + (lines - 1);
+        score += add;
         updateScoreDisplay();
         // 检查并更新最高分
         updateScoreMax();
     }
+
     //    游戏结束判断
-    public boolean checkOver(){
-        for (Point box : boxes) {
-    // 检查方块是否与地图上的其他方块重叠
-    //            if (maps[box.x][box.y])
+    public boolean checkOver() {
+        for (Point box : boxes)
+            // 检查方块是否与地图上的其他方块重叠
+            //if (maps[box.x][box.y])
             return true; // 游戏结束，方块与地图上的方块重叠
-        }
         return false;
     }
 
@@ -448,6 +449,7 @@ public class GameActivity extends AppCompatActivity {
             soundEffectPlayer = null;
         }
     }
+
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         switch (keyCode) {
@@ -488,6 +490,7 @@ public class GameActivity extends AppCompatActivity {
             txtCurrentScore.setText(String.valueOf(score)); // 更新 TextView 显示的分数
         }
     }
+
     public void updateHighScoreDisplay() {
         if (txtHighScore != null) {
             txtHighScore.setText(String.valueOf(scoremax));
