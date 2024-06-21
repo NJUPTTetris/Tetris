@@ -65,16 +65,18 @@
                         android:textSize="20sp" />
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:id="@+id/high_score"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_margin="4dp"
+                        android:layout_marginEnd="12dp"
+                        android:gravity="right"
                         android:text="@string/highest_score"
                         android:textSize="20sp" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
                     <TextView
@@ -85,9 +87,11 @@
                         android:textSize="20sp" />
 
                     <TextView
+                        android:id="@+id/current_score"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_margin="4dp"
+                        android:layout_marginEnd="12dp"
+                        android:gravity="right"
                         android:text="@string/current_score"
                         android:textSize="20sp" />
                 </LinearLayout>
