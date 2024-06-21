@@ -183,6 +183,14 @@ public class GameActivity extends AppCompatActivity {
         findViewById(R.id.btn_stop).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                isPaused = !isPaused; // 切换暂停状态
+                if (isPaused) {
+                    autoMoveHandler.removeCallbacks(autoMoveRunnable); // 移除自动下落的Runnable
+                } else {
+                    autoMoveHandler.post(autoMoveRunnable); // 重新开始自动下落
+                }
+            }
+        });
     }
 
     //下落
