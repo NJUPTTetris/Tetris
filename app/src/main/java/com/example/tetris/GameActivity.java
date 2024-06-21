@@ -47,37 +47,36 @@ public class GameActivity extends AppCompatActivity {
         boxType = random.nextInt(TUBE);
         boxPaint = new Paint();//初始化方块画笔
         switch (boxType) {
-            case 0:
+            case 0://粉碎男孩 Smashboy
                 boxPaint.setColor(ContextCompat.getColor(this, R.color.red));
                 boxes = new Point[]{new Point(4, 0), new Point(5, 0), new Point(4, 1), new Point(5, 1)};
                 break;
-            case 1:
+            case 1://橘色瑞克 Orange Ricky
                 boxPaint.setColor(ContextCompat.getColor(this, R.color.orange));
                 boxes = new Point[]{new Point(4, 1), new Point(5, 0), new Point(3, 1), new Point(5, 1)};
                 break;
-            case 2:
-                boxPaint.setColor(ContextCompat.getColor(this, R.color.yellow));
+            case 2://蓝色瑞克 Blue Ricky
+                boxPaint.setColor(ContextCompat.getColor(this, R.color.blue));
                 boxes = new Point[]{new Point(4, 1), new Point(3, 0), new Point(3, 1), new Point(5, 1)};
                 break;
-            case 3:
+            case 3://小T Teewee
                 boxPaint.setColor(ContextCompat.getColor(this, R.color.green));
                 boxes = new Point[]{new Point(4, 1), new Point(4, 0), new Point(3, 1), new Point(5, 1)};
                 break;
-            case 4:
+            case 4://英雄 Hero
                 boxPaint.setColor(ContextCompat.getColor(this, R.color.cyan));
                 boxes = new Point[]{new Point(4, 0), new Point(3, 0), new Point(5, 0), new Point(6, 0)};
                 break;
-            case 5:
-                boxPaint.setColor(ContextCompat.getColor(this, R.color.blue));
-                boxes = new Point[]{new Point(4, 1), new Point(4, 0), new Point(5, 1), new Point(5, 2)};
+            case 5://罗德岛Z Rhode Island Z
+                boxPaint.setColor(ContextCompat.getColor(this, R.color.yellow));
+                boxes = new Point[]{new Point(4, 1), new Point(4, 0), new Point(5, 0), new Point(3, 1)};
                 break;
-            case 6:
+            case 6://克里夫蘭Z Cleveland Z
                 boxPaint.setColor(ContextCompat.getColor(this, R.color.purple));
-                boxes = new Point[]{new Point(5, 1), new Point(5, 0), new Point(4, 1), new Point(4, 2)};
+                boxes = new Point[]{new Point(4, 1), new Point(4, 0), new Point(3, 0), new Point(5, 1)};
                 break;
         }
     }
-
 
     public void initListener() {//初始化监听
         findViewById(R.id.arrow_left).setOnClickListener(v -> {
