@@ -51,27 +51,27 @@ public class GameActivity extends AppCompatActivity {
                 boxes = new Point[]{new Point(4, 0), new Point(5, 0), new Point(4, 1), new Point(5, 1)};
                 break;
             case 1:
-                boxPaint.setColor(ContextCompat.getColor(this,R.color.orange));
+                boxPaint.setColor(ContextCompat.getColor(this, R.color.orange));
                 boxes = new Point[]{new Point(4, 1), new Point(5, 0), new Point(3, 1), new Point(5, 1)};
                 break;
             case 2:
-                boxPaint.setColor(ContextCompat.getColor(this,R.color.yellow));
+                boxPaint.setColor(ContextCompat.getColor(this, R.color.yellow));
                 boxes = new Point[]{new Point(4, 1), new Point(3, 0), new Point(3, 1), new Point(5, 1)};
                 break;
             case 3:
-                boxPaint.setColor(ContextCompat.getColor(this,R.color.green));
+                boxPaint.setColor(ContextCompat.getColor(this, R.color.green));
                 boxes = new Point[]{new Point(4, 1), new Point(4, 0), new Point(3, 1), new Point(5, 1)};
                 break;
             case 4:
-                boxPaint.setColor(ContextCompat.getColor(this,R.color.cyan));
+                boxPaint.setColor(ContextCompat.getColor(this, R.color.cyan));
                 boxes = new Point[]{new Point(4, 0), new Point(3, 0), new Point(5, 0), new Point(6, 0)};
                 break;
             case 5:
-                boxPaint.setColor(ContextCompat.getColor(this,R.color.blue));
+                boxPaint.setColor(ContextCompat.getColor(this, R.color.blue));
                 boxes = new Point[]{new Point(4, 1), new Point(4, 0), new Point(5, 1), new Point(5, 2)};
                 break;
             case 6:
-                boxPaint.setColor(ContextCompat.getColor(this,R.color.purple));
+                boxPaint.setColor(ContextCompat.getColor(this, R.color.purple));
                 boxes = new Point[]{new Point(5, 1), new Point(5, 0), new Point(4, 1), new Point(4, 2)};
                 break;
         }
@@ -142,7 +142,7 @@ public class GameActivity extends AppCompatActivity {
 
     public void rotate() {//顺时针旋转90
         if (boxType == 0) return;
-        for (Point box : boxes) {
+        for (Point box : boxes) {//笛卡尔旋转公式
             int checkX = -box.y + boxes[0].y + boxes[0].x;
             int checkY = box.x - boxes[0].x + boxes[0].y;
             if (checkBoundary(checkX, checkY)) return;
@@ -167,7 +167,7 @@ public class GameActivity extends AppCompatActivity {
     public void initView() {//初始化视图
 
         linePaint = new Paint();//初始化线条画笔
-        linePaint.setColor(0xff666666);
+        linePaint.setColor(0xffb4b779);
         linePaint.setStrokeWidth(3);
         linePaint.setAntiAlias(true);
 

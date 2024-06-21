@@ -10,4 +10,9 @@
     <string name="restart">Restart</string>
     <string name="next">Next</string>
     <string name="stop">Stop</string>
+    <string name="arrow_left">arrow left</string>
+    <string name="arrow_tight">arrow tight</string>
+    <string name="arrow_rotate">arrow rotate</string>
+    <string name="arrow_down">arrow down</string>
+    <string name="nextbox">nextbox</string>
 </resources>
