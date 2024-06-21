@@ -3,15 +3,18 @@ package com.example.tetris;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
+import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,6 +33,19 @@ public class GameActivity extends AppCompatActivity {
     int boxSize;//方块大小
     final int TUBE = 7;//方块种类
     int boxType;//选择方块类型
+
+    //当前分数
+    public int score;
+    public int scoremax;
+    //暂停状态
+    public boolean isPause;
+    //游戏结束状态
+    public boolean isOver;
+    private TextView txtCurrentScore;
+    private TextView txtHighScore;
+
+    private boolean isPaused = false; // 控制游戏是否暂停
+    private Handler autoMoveHandler = new Handler(); // 用于自动下落的Handler
     private MediaPlayer bgMediaPlayer; // 背景音乐的 MediaPlayer
     private MediaPlayer soundEffectPlayer; // 短暂音效的 MediaPlayer
 
@@ -37,11 +53,49 @@ public class GameActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
+        // 获取当前分数的 TextView 并设置初始分数
+        txtCurrentScore = findViewById(R.id.current_score);
+        txtCurrentScore.setText(String.valueOf(score)); // 设置初始分数
+        txtHighScore = findViewById(R.id.high_score); // 初始化最高分的 TextView
+        // 初始化分数和最高分
+        score = 0;
+        scoremax = getHighScoreFromPrefs(); // 从 SharedPreferences 加载最高分
+        updateScoreDisplay();
+        updateHighScoreDisplay();
+
         initData();
         newBoxes();
         initView();
         initListener();
+        // 确保游戏开始时自动下落
+        onResume();
         playBackgroundMusic();
+    }
+
+    //自动下降
+    private Runnable autoMoveRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (!isPaused && moveBottom()) {
+                autoMoveHandler.postDelayed(this, 500); // 500毫秒后再次执行，可以根据需要调整时间间隔
+            }
+        }
+    };
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!isPaused) {
+            autoMoveHandler.post(autoMoveRunnable); // 开始自动下落
+        }
+    }
+
+    //暂停游戏
+    @Override
+    protected void onPause() {
+        super.onPause();
+        isPaused = true; // 暂停游戏
+        autoMoveHandler.removeCallbacks(autoMoveRunnable); // 移除自动下落的Runnable
     }
 
     public void newBoxes() {//新的方块
@@ -103,12 +157,8 @@ public class GameActivity extends AppCompatActivity {
                 continue;
             }//优化加速
         });
-        findViewById(R.id.btn_restart).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                recreate();
-            }
-        });
+
+
         final Button btnStop = findViewById(R.id.btn_stop);
         btnStop.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -122,15 +172,36 @@ public class GameActivity extends AppCompatActivity {
                     }
                 }
             });
+
+        findViewById(R.id.btn_restart).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                recreate();
+            }
+        });
+
+        findViewById(R.id.btn_stop).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
     }
 
-    public boolean moveBottom() {//下落
-        if (move(0, 1))//移动成功不作处理
+    //下落
+    public boolean moveBottom() {
+        //1.移动成功 不作处理
+        if (move(0, 1))
             return true;
-        for (Point box : boxes)//移动失败堆积处理
+        //2.移动失败 堆积处理
+        for (Point box : boxes)
             maps[box.x][box.y] = true;
-        newBoxes();//生成新的方块
-        view.invalidate();//调用重绘
+        //3.消行处理
+        int lines=clearLine();
+        //4.加分
+        addScore(lines);
+        //5.生成新的方块
+        newBoxes();
+        //6.游戏结束判断，调用重绘
+        view.invalidate();
+        isOver=checkOver();
         return false;
     }
 
@@ -262,6 +333,57 @@ public class GameActivity extends AppCompatActivity {
         }
     }
 
+    //消行处理
+    public int clearLine(){
+        int lines=0;
+        for (int y = maps[0].length-1; y>0; y--){
+            // 消行判断
+            if(checkLine(y)) {
+                deleteLine(y);
+                //从消掉的那一行重新遍历
+                y++;
+                lines++;
+            }
+        }
+        return lines;
+    }
+    public boolean checkLine(int y){
+//        有一个不为true,则该行不能消除
+        for(int x=0;x<maps.length;x++){
+            if(!maps[x][y])
+                return false;
+        }
+        return true;
+    }
+    //执行消行
+    public void deleteLine(int dy) {
+        for (int y = maps[0].length-1; y>0; y--)
+            for (int x = 0; x < maps.length; x++) {
+                maps[x][y] = maps[x][y-1];
+            }
+    }
+
+    //加分
+    public void addScore(int lines){
+        if(lines==0)
+            return;
+        int add=lines+(lines-1);
+        score+=add;
+        updateScoreDisplay();
+        // 检查并更新最高分
+        updateScoreMax();
+    }
+    //    游戏结束判断
+    public boolean checkOver(){
+        for (Point box : boxes) {
+    // 检查方块是否与地图上的其他方块重叠
+    //            if (maps[box.x][box.y])
+            return true; // 游戏结束，方块与地图上的方块重叠
+        }
+        return false;
+    }
+
+
     // 停止背景音乐播放
     private void stopBackgroundMusic() {
         if (bgMediaPlayer != null) {
@@ -317,4 +439,39 @@ public class GameActivity extends AppCompatActivity {
         }
         return super.onKeyDown(keyCode, event);
     }
+
+    public void updateScoreDisplay() {
+        if (txtCurrentScore != null) {
+            txtCurrentScore.setText(String.valueOf(score)); // 更新 TextView 显示的分数
+        }
+    }
+    public void updateHighScoreDisplay() {
+        if (txtHighScore != null) {
+            txtHighScore.setText(String.valueOf(scoremax));
+        }
+    }
+
+    public void updateScoreMax() {
+        SharedPreferences prefs = getSharedPreferences("TetrisPrefs", MODE_PRIVATE);
+        // 从SharedPreferences获取最高分
+        int savedHighScore = prefs.getInt("highScore", 0);
+        // 如果当前分数大于保存的最高分，则更新最高分为当前分数
+        if (score > savedHighScore) {
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putInt("highScore", score);
+            editor.apply();
+            // 更新成员变量 highScore
+            scoremax = score;
+        }
+        // 只有在最高分被更新后，才更新 UI
+        if (scoremax == score) {
+            updateHighScoreDisplay();
+        }
+    }
+
+    public int getHighScoreFromPrefs() {
+        SharedPreferences prefs = getSharedPreferences("TetrisPrefs", MODE_PRIVATE);
+        return prefs.getInt("highScore", 0); // 如果没有保存的最高分，则返回0
+    }
+
 }
