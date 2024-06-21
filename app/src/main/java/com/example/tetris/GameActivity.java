@@ -4,7 +4,9 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.media.MediaPlayer;
@@ -14,6 +16,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -30,10 +33,13 @@ public class GameActivity extends AppCompatActivity {
     Paint boxPaint;//初始化方块画笔
     boolean[][] maps;//地图
     Point[] boxes;//方块
+    Point[] nextboxes; //方块
     int boxSize;//方块大小
     final int TUBE = 7;//方块种类
     int boxType;//选择方块类型
-
+    int nextboxType;//选择方块类型
+    // 新增一个变量来存储下一个方块的类型
+    int boxColor;
     //当前分数
     public int score;
     public int scoremax;
@@ -48,7 +54,15 @@ public class GameActivity extends AppCompatActivity {
     private Handler autoMoveHandler = new Handler(); // 用于自动下落的Handler
     private MediaPlayer bgMediaPlayer; // 背景音乐的 MediaPlayer
     private MediaPlayer soundEffectPlayer; // 短暂音效的 MediaPlayer
-
+    int[] boxColors = {
+            Color.parseColor("#C62828"), // 红色
+            Color.parseColor("#D84315"), // 橙色
+            Color.parseColor("#6990D5"), // 蓝色
+            Color.parseColor("#558B2F"), // 绿色
+            Color.parseColor("#00695C"), // 青色
+            Color.parseColor("#F9A825"), // 黄色
+            Color.parseColor("#6A1B9A")  // 紫色
+    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,8 +79,9 @@ public class GameActivity extends AppCompatActivity {
         updateHighScoreDisplay();
 
         initData();
-        newBoxes();
+
         initView();
+        newBoxes();
         initListener();
         // 确保游戏开始时自动下落
         onResume();
@@ -98,43 +113,69 @@ public class GameActivity extends AppCompatActivity {
         isPaused = true; // 暂停游戏
         autoMoveHandler.removeCallbacks(autoMoveRunnable); // 移除自动下落的Runnable
     }
-
-    public void newBoxes() {//新的方块
-        Random random = new Random();
-        boxType = random.nextInt(TUBE);
-        boxPaint = new Paint();//初始化方块画笔
-        switch (boxType) {
+    public void newBoxes() { //生成一个新的随机方块
+        if(nextboxes==null){
+            nextBoxes();
+        }
+        boxes=nextboxes;
+        boxType=nextboxType;
+        nextBoxes();
+        // 获取ImageView并设置新的Bitmap
+        ImageView nextBlockView = findViewById(R.id.next_image);
+        Bitmap nextBlockBitmap = drawNextBlock(nextboxes);
+        nextBlockView.setImageBitmap(nextBlockBitmap);
+    }
+    public void nextBoxes(){
+        Random random=new Random();
+        nextboxType=random.nextInt(TUBE);
+        switch (nextboxType){
             case 0://粉碎男孩 Smashboy
-                boxPaint.setColor(ContextCompat.getColor(this, R.color.red));
-                boxes = new Point[]{new Point(4, 0), new Point(5, 0), new Point(4, 1), new Point(5, 1)};
+                nextboxes=new Point[]{new Point(4, 0), new Point(5, 0), new Point(4, 1), new Point(5, 1)};
                 break;
             case 1://橘色瑞克 Orange Ricky
-                boxPaint.setColor(ContextCompat.getColor(this, R.color.orange));
-                boxes = new Point[]{new Point(4, 1), new Point(5, 0), new Point(3, 1), new Point(5, 1)};
+                nextboxes= new Point[]{new Point(4, 1), new Point(5, 0), new Point(3, 1), new Point(5, 1)};
                 break;
             case 2://蓝色瑞克 Blue Ricky
-                boxPaint.setColor(ContextCompat.getColor(this, R.color.blue));
-                boxes = new Point[]{new Point(4, 1), new Point(3, 0), new Point(3, 1), new Point(5, 1)};
+                nextboxes= new Point[]{new Point(4, 1), new Point(3, 0), new Point(3, 1), new Point(5, 1)};
                 break;
             case 3://小T Teewee
-                boxPaint.setColor(ContextCompat.getColor(this, R.color.green));
-                boxes = new Point[]{new Point(4, 1), new Point(4, 0), new Point(3, 1), new Point(5, 1)};
+                nextboxes= new Point[]{new Point(4, 1), new Point(4, 0), new Point(3, 1), new Point(5, 1)};
                 break;
             case 4://英雄 Hero
-                boxPaint.setColor(ContextCompat.getColor(this, R.color.cyan));
-                boxes = new Point[]{new Point(4, 0), new Point(3, 0), new Point(5, 0), new Point(6, 0)};
+                nextboxes= new Point[]{new Point(4, 0), new Point(3, 0), new Point(5, 0), new Point(6, 0)};
                 break;
             case 5://罗德岛Z Rhode Island Z
-                boxPaint.setColor(ContextCompat.getColor(this, R.color.yellow));
-                boxes = new Point[]{new Point(4, 1), new Point(4, 0), new Point(5, 0), new Point(3, 1)};
+                nextboxes= new Point[]{new Point(4, 1), new Point(4, 0), new Point(5, 0), new Point(3, 1)};
                 break;
             case 6://克里夫蘭Z Cleveland Z
-                boxPaint.setColor(ContextCompat.getColor(this, R.color.purple));
-                boxes = new Point[]{new Point(4, 1), new Point(4, 0), new Point(3, 0), new Point(5, 1)};
+                nextboxes= new Point[]{new Point(4, 1), new Point(4, 0), new Point(3, 0), new Point(5, 1)};
                 break;
         }
+        boxPaint.setColor(boxColors[boxType]);
+        boxColor = boxColors[nextboxType];
     }
-
+    private Bitmap drawNextBlock(Point[] nextboxes) {
+        // 创建一个与ImageView相同大小的Bitmap
+        Bitmap bitmap = Bitmap.createBitmap(140, 100, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        // 设置方块颜色
+        Paint nextboxPaint = new Paint();
+        // 使用存储的颜色
+        nextboxPaint.setColor(boxColor);
+        // 计算方块大小
+        int boxSize = 18;
+        // 在Canvas上绘制方块
+        for (Point box : nextboxes) {
+            canvas.drawRect(
+                    box.x * boxSize,
+                    box.y * boxSize,
+                    (box.x + 1) * boxSize,
+                    (box.y + 1) * boxSize,
+                    nextboxPaint
+            );
+        }
+        return bitmap;
+    }
     public void initListener() {//初始化监听
         findViewById(R.id.arrow_left).setOnClickListener(v -> {
             Animation(v); // 调用封装的动画函数
@@ -256,7 +297,8 @@ public class GameActivity extends AppCompatActivity {
         mapPaint = new Paint();
         mapPaint.setColor(0x50000000);
         mapPaint.setAntiAlias(true);
-
+        boxPaint=new Paint();//初始化方块画笔
+        boxPaint.setColor(0xff000000);
         FrameLayout layoutGame = findViewById(R.id.layoutGame);//得到父容器
         view = new View(this) {
             @Override
