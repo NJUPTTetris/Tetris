@@ -57,6 +57,7 @@ public class GameActivity extends AppCompatActivity {
         txtCurrentScore = findViewById(R.id.current_score);
         txtCurrentScore.setText(String.valueOf(score)); // 设置初始分数
         txtHighScore = findViewById(R.id.high_score); // 初始化最高分的 TextView
+
         // 初始化分数和最高分
         score = 0;
         scoremax = getHighScoreFromPrefs(); // 从 SharedPreferences 加载最高分
@@ -158,31 +159,23 @@ public class GameActivity extends AppCompatActivity {
             }//优化加速
         });
 
-
-        final Button btnStop = findViewById(R.id.btn_stop);
-        btnStop.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (bgMediaPlayer != null && bgMediaPlayer.isPlaying()) {
-                        stopBackgroundMusic();
-                        btnStop.setText("Continue");
-                    } else {
-                        playBackgroundMusic();
-                        btnStop.setText("Stop");
-                    }
-                }
-            });
-
         findViewById(R.id.btn_restart).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 recreate();
             }
         });
-
+        final Button btnStop = findViewById(R.id.btn_stop);
         findViewById(R.id.btn_stop).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (bgMediaPlayer != null && bgMediaPlayer.isPlaying()) {
+                    stopBackgroundMusic();
+                    btnStop.setText("Continue");
+                } else {
+                    playBackgroundMusic();
+                    btnStop.setText("Stop");
+                }
                 isPaused = !isPaused; // 切换暂停状态
                 if (isPaused) {
                     autoMoveHandler.removeCallbacks(autoMoveRunnable); // 移除自动下落的Runnable
@@ -481,5 +474,4 @@ public class GameActivity extends AppCompatActivity {
         SharedPreferences prefs = getSharedPreferences("TetrisPrefs", MODE_PRIVATE);
         return prefs.getInt("highScore", 0); // 如果没有保存的最高分，则返回0
     }
-
 }
