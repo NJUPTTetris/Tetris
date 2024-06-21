@@ -10,6 +10,7 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
@@ -29,9 +30,8 @@ public class GameActivity extends AppCompatActivity {
     int boxSize;//方块大小
     final int TUBE = 7;//方块种类
     int boxType;//选择方块类型
-    private MediaPlayer mediaPlayer; // 声MediaPlayer 对象
-
-
+    private MediaPlayer bgMediaPlayer; // 背景音乐的 MediaPlayer
+    private MediaPlayer soundEffectPlayer; // 短暂音效的 MediaPlayer
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +40,8 @@ public class GameActivity extends AppCompatActivity {
         newBoxes();
         initView();
         initListener();
+        playBackgroundMusic();
+
     }
 
     public void newBoxes() {//新的方块
@@ -81,22 +83,22 @@ public class GameActivity extends AppCompatActivity {
     public void initListener() {//初始化监听
         findViewById(R.id.arrow_left).setOnClickListener(v -> {
             Animation(v); // 调用封装的动画函数
-            playChangeSound();// 调用播放音效的函数
+            playSound(R.raw.sound_change);// 调用播放音效的函数
             move(-1, 0);
         });
         findViewById(R.id.arrow_right).setOnClickListener(v -> {
             Animation(v);
-            playChangeSound();
+            playSound(R.raw.sound_change);
             move(1, 0);
         });
         findViewById(R.id.arrow_rotate).setOnClickListener(v -> {
             Animation(v);
-            playChangeSound();
+            playSound(R.raw.sound_change);
             rotate();
         });
         findViewById(R.id.arrow_down).setOnClickListener(v -> {
             Animation(v);
-            playDownSound();
+            playSound(R.raw.sound_change);
             while (moveBottom()) {
                 continue;
             }//优化加速
@@ -107,11 +109,20 @@ public class GameActivity extends AppCompatActivity {
                 recreate();
             }
         });
-        findViewById(R.id.btn_stop).setOnClickListener(new View.OnClickListener() {
+        final Button btnStop = findViewById(R.id.btn_stop);
+        btnStop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (bgMediaPlayer != null && bgMediaPlayer.isPlaying()) {
+                    stopBackgroundMusic();
+                    btnStop.setText("Continue");
+                } else {
+                    playBackgroundMusic();
+                    btnStop.setText("Stop");
+                }
             }
         });
+
     }
 
     public boolean moveBottom() {//下落
@@ -235,29 +246,43 @@ public class GameActivity extends AppCompatActivity {
         scaleYAnimator.start();
     }
 
-    private void playChangeSound() {
-        // 播放左移、右移、旋转音效
-        if (mediaPlayer != null) {
-            mediaPlayer.release(); // 释放之前的 MediaPlayer 资源
+    private void playSound(int soundResId) {
+        // 播放音效的方法
+        if (soundEffectPlayer != null) {
+            soundEffectPlayer.release(); // 释放之前的 MediaPlayer 资源
         }
-        mediaPlayer = MediaPlayer.create(this, R.raw.sound_change); // 指定要播放的音效文件
-        mediaPlayer.start(); // 开始播放音效
+        soundEffectPlayer = MediaPlayer.create(this, soundResId); // 指定要播放的音效文件
+        soundEffectPlayer.start(); // 开始播放音效
     }
 
-    private void playDownSound() {
-        // 播放坠落音效的方法
-        if (mediaPlayer != null) {
-            mediaPlayer.release(); // 释放之前的 MediaPlayer 资源
+    // 播放背景音乐，循环播放
+    private void playBackgroundMusic() {
+        if (bgMediaPlayer == null) {
+            bgMediaPlayer = MediaPlayer.create(this, R.raw.backgroud_music);
+            bgMediaPlayer.setLooping(true); // 设置背景音乐循环播放
+            bgMediaPlayer.start();
         }
-        mediaPlayer = MediaPlayer.create(this, R.raw.sound_down); // 指定要播放的音效文件
-        mediaPlayer.start(); // 开始播放音效
+    }
+
+    // 停止背景音乐播放
+    private void stopBackgroundMusic() {
+        if (bgMediaPlayer != null) {
+            bgMediaPlayer.stop();
+            bgMediaPlayer.release();
+            bgMediaPlayer = null;
+        }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (mediaPlayer != null) {
-            mediaPlayer.release(); // 释放 MediaPlayer 资源
+        // 停止背景音乐播放
+        stopBackgroundMusic();
+
+        // 停止并释放短暂音效的 MediaPlayer
+        if (soundEffectPlayer != null) {
+            soundEffectPlayer.release();
+            soundEffectPlayer = null;
         }
     }
     @Override
