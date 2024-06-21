@@ -8,6 +8,7 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 
@@ -259,5 +260,39 @@ public class GameActivity extends AppCompatActivity {
         if (mediaPlayer != null) {
             mediaPlayer.release(); // 释放 MediaPlayer 资源
         }
+    }
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_DPAD_LEFT:
+            case KeyEvent.KEYCODE_A:
+                View leftButton = findViewById(R.id.arrow_left);
+                if (leftButton != null) {
+                    leftButton.performClick(); // 模拟点击事件
+                    return true; // 表示事件已被处理
+                }
+            case KeyEvent.KEYCODE_DPAD_RIGHT:
+            case KeyEvent.KEYCODE_D:
+                View rightButton = findViewById(R.id.arrow_right);
+                if (rightButton != null) {
+                    rightButton.performClick(); // 模拟点击事件
+                    return true; // 表示事件已被处理
+                }
+            case KeyEvent.KEYCODE_DPAD_UP:
+            case KeyEvent.KEYCODE_W:
+                View rotateButton = findViewById(R.id.arrow_rotate);
+                if (rotateButton != null) {
+                    rotateButton.performClick(); // 模拟点击事件
+                    return true; // 表示事件已被处理
+                }
+            case KeyEvent.KEYCODE_DPAD_DOWN:
+            case KeyEvent.KEYCODE_S:
+                View downButton = findViewById(R.id.arrow_down);
+                if (downButton != null) {
+                    downButton.performClick(); // 模拟点击事件
+                    return true; // 表示事件已被处理
+                }
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }
