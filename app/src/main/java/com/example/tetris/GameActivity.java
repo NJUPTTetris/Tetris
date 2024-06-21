@@ -6,6 +6,7 @@ import android.animation.ObjectAnimator;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -27,6 +28,8 @@ public class GameActivity extends AppCompatActivity {
     int boxSize;//方块大小
     final int TUBE = 7;//方块种类
     int boxType;//选择方块类型
+    private MediaPlayer mediaPlayer; // 声MediaPlayer 对象
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,18 +81,22 @@ public class GameActivity extends AppCompatActivity {
     public void initListener() {//初始化监听
         findViewById(R.id.arrow_left).setOnClickListener(v -> {
             Animation(v); // 调用封装的动画函数
+            playChangeSound();// 调用播放音效的函数
             move(-1, 0);
         });
         findViewById(R.id.arrow_right).setOnClickListener(v -> {
             Animation(v);
+            playChangeSound();
             move(1, 0);
         });
         findViewById(R.id.arrow_rotate).setOnClickListener(v -> {
             Animation(v);
+            playChangeSound();
             rotate();
         });
         findViewById(R.id.arrow_down).setOnClickListener(v -> {
             Animation(v);
+            playDownSound();
             while (moveBottom()) {
                 continue;
             }//优化加速
@@ -226,5 +233,31 @@ public class GameActivity extends AppCompatActivity {
         // 启动缩小动画
         scaleXAnimator.start();
         scaleYAnimator.start();
+    }
+
+    private void playChangeSound() {
+        // 播放左移、右移、旋转音效
+        if (mediaPlayer != null) {
+            mediaPlayer.release(); // 释放之前的 MediaPlayer 资源
+        }
+        mediaPlayer = MediaPlayer.create(this, R.raw.sound_change); // 指定要播放的音效文件
+        mediaPlayer.start(); // 开始播放音效
+    }
+
+    private void playDownSound() {
+        // 播放坠落音效的方法
+        if (mediaPlayer != null) {
+            mediaPlayer.release(); // 释放之前的 MediaPlayer 资源
+        }
+        mediaPlayer = MediaPlayer.create(this, R.raw.sound_down); // 指定要播放的音效文件
+        mediaPlayer.start(); // 开始播放音效
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mediaPlayer != null) {
+            mediaPlayer.release(); // 释放 MediaPlayer 资源
+        }
     }
 }
