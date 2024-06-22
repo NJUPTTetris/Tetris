@@ -1,5 +1,4 @@
 package com.example.tetris;
-
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
@@ -34,11 +33,11 @@ public class GameActivity extends AppCompatActivity {
     Paint mapPaint;//地图画笔
     Paint linePaint;//初始化辅助线画笔
     Paint boxPaint;//初始化方块画笔
-    boolean[][] maps;//地图
+    int[][] maps;//地图
     Point[] boxes;//方块
     Point[] nextboxes; //方块
     int boxSize;//方块大小
-    final int TUBE = 7;//方块种类
+    final int TUBE = 8;//方块种类
     int boxType;//选择方块类型
     int nextboxType;//选择方块类型
     // 新增一个变量来存储下一个方块的类型
@@ -54,7 +53,7 @@ public class GameActivity extends AppCompatActivity {
     private Handler autoMoveHandler = new Handler(); // 用于自动下落的Handler
     private MediaPlayer bgMediaPlayer; // 背景音乐的 MediaPlayer
     private MediaPlayer soundEffectPlayer; // 短暂音效的 MediaPlayer
-    int[] boxColors = {Color.parseColor("#C62828"), // 红色
+    int[] boxColors = {0,Color.parseColor("#C62828"), // 红色
             Color.parseColor("#D84315"), // 橙色
             Color.parseColor("#F9A825"), // 黄色
             Color.parseColor("#558B2F"), // 绿色
@@ -133,27 +132,28 @@ public class GameActivity extends AppCompatActivity {
 
     public void nextBoxes() {
         Random random = new Random();
-        nextboxType = random.nextInt(TUBE);
+        nextboxType = random.nextInt(TUBE - 1) + 1; // 生成 1 到 7 之间的随机数
+
         switch (nextboxType) {
-            case 0://粉碎男孩 Smashboy
+            case 1://粉碎男孩 Smashboy
                 nextboxes = new Point[]{new Point(4, 0), new Point(5, 0), new Point(4, 1), new Point(5, 1)};
                 break;
-            case 1://橘色瑞克 Orange Ricky
+            case 2://橘色瑞克 Orange Ricky
                 nextboxes = new Point[]{new Point(5, 1), new Point(6, 0), new Point(4, 1), new Point(6, 1)};
                 break;
-            case 2://罗德岛Z Rhode Island Z
+            case 3://罗德岛Z Rhode Island Z
                 nextboxes = new Point[]{new Point(5, 1), new Point(5, 0), new Point(6, 0), new Point(4, 1)};
                 break;
-            case 3://小T Teewee
+            case 4://小T Teewee
                 nextboxes = new Point[]{new Point(5, 1), new Point(5, 0), new Point(4, 1), new Point(6, 1)};
                 break;
-            case 4://英雄 Hero
+            case 5://英雄 Hero
                 nextboxes = new Point[]{new Point(4, 0), new Point(3, 0), new Point(5, 0), new Point(6, 0)};
                 break;
-            case 5://蓝色瑞克 Blue Ricky
+            case 6://蓝色瑞克 Blue Ricky
                 nextboxes = new Point[]{new Point(5, 1), new Point(4, 0), new Point(4, 1), new Point(6, 1)};
                 break;
-            case 6://克里夫蘭Z Cleveland Z
+            case 7://克里夫蘭Z Cleveland Z
                 nextboxes = new Point[]{new Point(5, 1), new Point(5, 0), new Point(4, 0), new Point(6, 1)};
                 break;
         }
@@ -239,7 +239,7 @@ public class GameActivity extends AppCompatActivity {
         if (move(0, 1)) return true;
         //2.移动失败 堆积处理
         for (Point box : boxes)
-            maps[box.x][box.y] = true;
+            maps[box.x][box.y] = boxType;
         //3.消行处理
         int lines = clearLine();
         if (lines>=2)//消多行，音效增加欢呼声
@@ -269,7 +269,7 @@ public class GameActivity extends AppCompatActivity {
     }
 
     public boolean checkBoundary(int x, int y) {//边界判断
-        return (x < 0 || y < 0 || x >= maps.length || y >= maps[0].length || maps[x][y]);
+        return (x < 0 || y < 0 || x >= maps.length || y >= maps[0].length || maps[x][y]!=0);
     }
 
     public void rotate() {//顺时针旋转90
@@ -292,7 +292,7 @@ public class GameActivity extends AppCompatActivity {
     public void initData() {
         xWidth = Math.round(160f * getResources().getDisplayMetrics().density);//获取游戏区域宽度
         xHeight = xWidth * 3;
-        maps = new boolean[10][30];//初始化地图
+        maps = new int[10][30];//初始化地图
         boxSize = xWidth / maps.length;
     }
 
@@ -324,13 +324,17 @@ public class GameActivity extends AppCompatActivity {
                 for (Point box : boxes) {
                     canvas.drawRect(box.x * boxSize, box.y * boxSize, box.x * boxSize + boxSize, box.y * boxSize + boxSize, boxPaint);
                 }
-                //绘制地图
+
                 for (int x = 0; x < maps.length; x++) {
                     for (int y = 0; y < maps[x].length; y++) {
-                        if (maps[x][y]) 
+                        int blockType = maps[x][y]; // 获取当前坐标处的方块类型编号
+                        if (blockType > 0 && blockType < 8) {
+                            mapPaint.setColor(boxColors[blockType]); // 设置当前方块的颜色
                             canvas.drawRect(x * boxSize, y * boxSize, x * boxSize + boxSize, y * boxSize + boxSize, mapPaint);
+                        }
                     }
                 }
+
             }
         };
         view.setLayoutParams(new FrameLayout.LayoutParams(xWidth, xHeight));
@@ -405,9 +409,9 @@ public class GameActivity extends AppCompatActivity {
     }
 
     public boolean checkLine(int y) {
-        //有一个不为true,则该行不能消除
-        for (boolean[] map : maps) {
-            if (!map[y]) return false;
+        //有一个不为1-7,则该行不能消除
+        for (int[] map : maps) {
+            if (map[y]==0) return false;
         }
         return true;
     }
@@ -415,6 +419,11 @@ public class GameActivity extends AppCompatActivity {
     //执行消行
     public void deleteLine(int dy) {
         for (int y = dy; y > 0; y--) {
+            try {
+                Thread.sleep(10); // 延时10毫秒
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             for (int x = 0; x < maps.length; x++) {
                 maps[x][y] = maps[x][y - 1];
             }
