@@ -316,7 +316,7 @@ public class GameActivity extends AppCompatActivity {
                 //绘制地图
                 for (int x = 0; x < maps.length; x++) {
                     for (int y = 0; y < maps[x].length; y++) {
-                        if (maps[x][y])
+                        if (maps[x][y]) 
                             canvas.drawRect(x * boxSize, y * boxSize, x * boxSize + boxSize, y * boxSize + boxSize, mapPaint);
                     }
                 }
@@ -383,6 +383,7 @@ public class GameActivity extends AppCompatActivity {
             // 消行判断
             if (checkLine(y)) {
                 deleteLine(y);
+                playSound(R.raw.sound_eliminate_lot);
                 //从消掉的那一行重新遍历
                 y++;
                 lines++;
