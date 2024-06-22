@@ -130,6 +130,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
+                android:backgroundTint="#AA723A"
                 android:text="@string/stop"
                 android:textSize="20sp" />
 
@@ -138,6 +139,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
+                android:backgroundTint="#AA723A"
                 android:text="@string/restart"
                 android:textSize="20sp" />
         </LinearLayout>

@@ -1,4 +1,5 @@
 package com.example.tetris;
+
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
@@ -53,7 +54,7 @@ public class GameActivity extends AppCompatActivity {
     private Handler autoMoveHandler = new Handler(); // 用于自动下落的Handler
     private MediaPlayer bgMediaPlayer; // 背景音乐的 MediaPlayer
     private MediaPlayer soundEffectPlayer; // 短暂音效的 MediaPlayer
-    int[] boxColors = {0,Color.parseColor("#C62828"), // 红色
+    int[] boxColors = {0, Color.parseColor("#C62828"), // 红色
             Color.parseColor("#D84315"), // 橙色
             Color.parseColor("#F9A825"), // 黄色
             Color.parseColor("#558B2F"), // 绿色
@@ -180,28 +181,28 @@ public class GameActivity extends AppCompatActivity {
 
     public void initListener() {//初始化监听
         findViewById(R.id.arrow_left).setOnClickListener(v -> {
-            if(isPaused)
+            if (isPaused)
                 return;//如果暂停，禁用
             Animation(v); // 调用封装的动画函数
             playSound(R.raw.sound_change);// 调用播放音效的函数
             move(-1, 0);
         });
         findViewById(R.id.arrow_right).setOnClickListener(v -> {
-            if(isPaused)
+            if (isPaused)
                 return;
             Animation(v);
             playSound(R.raw.sound_change);
             move(1, 0);
         });
         findViewById(R.id.arrow_rotate).setOnClickListener(v -> {
-            if(isPaused)
+            if (isPaused)
                 return;
             Animation(v);
             playSound(R.raw.sound_change);
             rotate();
         });
         findViewById(R.id.arrow_down).setOnClickListener(v -> {
-            if(isPaused)
+            if (isPaused)
                 return;
             Animation(v);
             playSound(R.raw.sound_down);
@@ -242,9 +243,9 @@ public class GameActivity extends AppCompatActivity {
             maps[box.x][box.y] = boxType;
         //3.消行处理
         int lines = clearLine();
-        if (lines>=2)//消多行，音效增加欢呼声
+        if (lines >= 2)//消多行，音效增加欢呼声
             playSound(R.raw.sound_eliminate_lot);
-        if (lines==1)//消单行音效
+        if (lines == 1)//消单行音效
             playSound(R.raw.sound_eliminate);
         //4.加分
         addScore(lines);
@@ -269,7 +270,7 @@ public class GameActivity extends AppCompatActivity {
     }
 
     public boolean checkBoundary(int x, int y) {//边界判断
-        return (x < 0 || y < 0 || x >= maps.length || y >= maps[0].length || maps[x][y]!=0);
+        return (x < 0 || y < 0 || x >= maps.length || y >= maps[0].length || maps[x][y] != 0);
     }
 
     public void rotate() {//顺时针旋转90
@@ -411,7 +412,7 @@ public class GameActivity extends AppCompatActivity {
     public boolean checkLine(int y) {
         //有一个不为1-7,则该行不能消除
         for (int[] map : maps) {
-            if (map[y]==0) return false;
+            if (map[y] == 0) return false;
         }
         return true;
     }
@@ -444,8 +445,15 @@ public class GameActivity extends AppCompatActivity {
     public boolean checkOver() {
         for (Point box : boxes)
             // 检查方块是否与地图上的其他方块重叠
-            //if (maps[box.x][box.y])
-            return true; // 游戏结束，方块与地图上的方块重叠
+            if (maps[box.x][box.y] > 0 && maps[box.x][box.y] < 8) {
+                View StopButton = findViewById(R.id.btn_stop);
+                if (StopButton != null) {
+                    StopButton.performClick(); // 模拟停止点击事件
+                }
+                GameoverDialogFragment gameoverDialog = GameoverDialogFragment.newInstance(score, scoremax);
+                gameoverDialog.show(getSupportFragmentManager(), "GameoverDialog");
+                return true; // 游戏结束，方块与地图上的方块重叠
+            }
         return false;
     }
 
