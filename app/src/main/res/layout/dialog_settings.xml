@@ -1,78 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="300dp"
     android:layout_height="match_parent"
+    android:layout_gravity="center"
     android:layout_margin="12dp"
-    android:background="#f8d360"
-    android:orientation="vertical">
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:background="@drawable/settingsbackground"
-        android:gravity="center"
-        android:text="@string/settings"
-        android:textSize="36sp" />
+    app:cardCornerRadius="20dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal">
+        android:background="#f8d360"
+        android:orientation="vertical">
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_margin="12dp"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:gravity="center"
-                android:text="@string/speed"
-                android:textSize="24sp" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:gravity="center"
-                android:text="@string/music"
-                android:textSize="24sp" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:gravity="center"
-                android:text="@string/sound_effect"
-                android:textSize="24sp" />
-        </LinearLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:background="@drawable/settingsbackground"
+            android:gravity="center"
+            android:text="@string/settings"
+            android:textSize="36sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="12dp"
-            android:orientation="vertical">
+            android:orientation="horizontal">
 
-            <SeekBar
-                android:id="@+id/seekBar_speed"
-                style="@style/Widget.AppCompat.SeekBar.Discrete"
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_margin="12dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:gravity="center"
+                    android:text="@string/speed"
+                    android:textSize="24sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:gravity="center"
+                    android:text="@string/music"
+                    android:textSize="24sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:gravity="center"
+                    android:text="@string/sound_effect"
+                    android:textSize="24sp" />
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:max="5" />
+                android:layout_height="match_parent"
+                android:layout_margin="12dp"
+                android:orientation="vertical">
 
-            <androidx.appcompat.widget.SwitchCompat
-                android:id="@+id/switch_music"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:checked="true" />
+                <SeekBar
+                    android:id="@+id/seekBar_speed"
+                    style="@style/Widget.AppCompat.SeekBar.Discrete"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:max="5" />
 
-            <androidx.appcompat.widget.SwitchCompat
-                android:id="@+id/switch_sound_effect"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:checked="true" />
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switch_music"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:checked="true" />
 
-
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switch_sound_effect"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:checked="true" />
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
-</LinearLayout>
+</androidx.cardview.widget.CardView>

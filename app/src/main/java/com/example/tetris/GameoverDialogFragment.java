@@ -4,9 +4,11 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 
 import android.view.LayoutInflater;
@@ -40,6 +42,8 @@ public class GameoverDialogFragment extends DialogFragment {
         TextView text_highest = view.findViewById(R.id.text_highest);
         Button btn_play_again = view.findViewById(R.id.btn_play_again);
 
+        Drawable progressDrawable = ContextCompat.getDrawable(requireActivity(), R.drawable.blue_progress);
+        progressBar_score.setProgressDrawable(progressDrawable);
         Bundle args = getArguments();
         if (args != null) {
             int current = args.getInt("current", 0); // 假设默认成绩为0
