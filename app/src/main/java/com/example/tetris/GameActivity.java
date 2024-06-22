@@ -180,21 +180,29 @@ public class GameActivity extends AppCompatActivity {
 
     public void initListener() {//初始化监听
         findViewById(R.id.arrow_left).setOnClickListener(v -> {
+            if(isPaused)
+                return;//如果暂停，禁用
             Animation(v); // 调用封装的动画函数
             playSound(R.raw.sound_change);// 调用播放音效的函数
             move(-1, 0);
         });
         findViewById(R.id.arrow_right).setOnClickListener(v -> {
+            if(isPaused)
+                return;
             Animation(v);
             playSound(R.raw.sound_change);
             move(1, 0);
         });
         findViewById(R.id.arrow_rotate).setOnClickListener(v -> {
+            if(isPaused)
+                return;
             Animation(v);
             playSound(R.raw.sound_change);
             rotate();
         });
         findViewById(R.id.arrow_down).setOnClickListener(v -> {
+            if(isPaused)
+                return;
             Animation(v);
             playSound(R.raw.sound_down);
             while (moveBottom()) {
@@ -234,6 +242,10 @@ public class GameActivity extends AppCompatActivity {
             maps[box.x][box.y] = true;
         //3.消行处理
         int lines = clearLine();
+        if (lines>=2)//消多行，音效增加欢呼声
+            playSound(R.raw.sound_eliminate_lot);
+        if (lines==1)//消单行音效
+            playSound(R.raw.sound_eliminate);
         //4.加分
         addScore(lines);
         //5.生成新的方块
@@ -384,7 +396,6 @@ public class GameActivity extends AppCompatActivity {
             // 消行判断
             if (checkLine(y)) {
                 deleteLine(y);
-                playSound(R.raw.sound_eliminate_lot);
                 //从消掉的那一行重新遍历
                 y++;
                 lines++;
