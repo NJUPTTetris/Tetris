@@ -26,6 +26,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.util.Random;
 
 public class GameActivity extends AppCompatActivity {
+    int speed;//速度
+    boolean isSwitchOnMusic;//是否有音乐
+    boolean isSwitchOnSoundEffect;//是否有音效
     int xWidth, xHeight;//游戏区域宽度高度
     View view;//游戏区域控件
     Paint mapPaint;//地图画笔
@@ -43,13 +46,10 @@ public class GameActivity extends AppCompatActivity {
     //当前分数
     public int score;
     public int scoremax;
-    //暂停状态
-    public boolean isPause;
     //游戏结束状态
     public boolean isOver;
     private TextView txtCurrentScore;
     private TextView txtHighScore;
-
     private boolean isPaused = false; // 控制游戏是否暂停
     private Handler autoMoveHandler = new Handler(); // 用于自动下落的Handler
     private MediaPlayer bgMediaPlayer; // 背景音乐的 MediaPlayer
@@ -67,6 +67,10 @@ public class GameActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
+
+        speed = getIntent().getIntExtra("speed", 0);
+        isSwitchOnMusic = getIntent().getBooleanExtra("isSwitchOnMusic", true);//传入是否需要音乐
+        isSwitchOnSoundEffect = getIntent().getBooleanExtra("isSwitchOnSoundEffect", true);//传入是否需要音效
 
         // 获取当前分数的 TextView 并设置初始分数
         txtCurrentScore = findViewById(R.id.current_score);
@@ -93,7 +97,7 @@ public class GameActivity extends AppCompatActivity {
         @Override
         public void run() {
             if (!isPaused && moveBottom()) {
-                autoMoveHandler.postDelayed(this, 500); // 500毫秒后再次执行，可以根据需要调整时间间隔
+                autoMoveHandler.postDelayed(this, 500 - speed * 50); // 500毫秒后再次执行，可以根据需要调整时间间隔
             }
         }
     };
@@ -198,12 +202,7 @@ public class GameActivity extends AppCompatActivity {
             }//优化加速
         });
 
-        findViewById(R.id.btn_restart).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                recreate();
-            }
-        });
+        findViewById(R.id.btn_restart).setOnClickListener(v -> recreate());
         final Button btnStop = findViewById(R.id.btn_stop);
         findViewById(R.id.btn_stop).setOnClickListener(new View.OnClickListener() {
             @SuppressLint("SetTextI18n")
@@ -288,7 +287,7 @@ public class GameActivity extends AppCompatActivity {
     public void initView() {//初始化视图
 
         linePaint = new Paint();//初始化线条画笔
-        linePaint.setColor(0xffb4b779);
+        linePaint.setColor(0xffa5af95);
         linePaint.setStrokeWidth(3);
         linePaint.setAntiAlias(true);
 
@@ -359,17 +358,19 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void playSound(int soundResId) {
-        // 播放音效的方法
-        if (soundEffectPlayer != null) {
-            soundEffectPlayer.release(); // 释放之前的 MediaPlayer 资源
+        if (isSwitchOnSoundEffect) {
+            // 播放音效的方法
+            if (soundEffectPlayer != null) {
+                soundEffectPlayer.release(); // 释放之前的 MediaPlayer 资源
+            }
+            soundEffectPlayer = MediaPlayer.create(this, soundResId); // 指定要播放的音效文件
+            soundEffectPlayer.start(); // 开始播放音效
         }
-        soundEffectPlayer = MediaPlayer.create(this, soundResId); // 指定要播放的音效文件
-        soundEffectPlayer.start(); // 开始播放音效
     }
 
     // 播放背景音乐，循环播放
     private void playBackgroundMusic() {
-        if (bgMediaPlayer == null) {
+        if (bgMediaPlayer == null && isSwitchOnMusic) {
             bgMediaPlayer = MediaPlayer.create(this, R.raw.backgroud_music);
             bgMediaPlayer.setLooping(true); // 设置背景音乐循环播放
             bgMediaPlayer.start();
