@@ -26,13 +26,13 @@
                 android:id="@+id/layoutGame"
                 android:layout_width="160dp"
                 android:layout_height="480dp"
-                android:layout_marginTop="8dp" />
+                android:layout_marginTop="9dp" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="8dp"
             android:gravity="center"
             android:orientation="vertical">
 
@@ -132,7 +132,7 @@
                 android:layout_marginTop="16dp"
                 android:backgroundTint="#AA723A"
                 android:text="@string/stop"
-                android:textSize="20sp" />
+                android:textSize="18sp" />
 
             <Button
                 android:id="@+id/btn_restart"
@@ -141,7 +141,7 @@
                 android:layout_marginTop="16dp"
                 android:backgroundTint="#AA723A"
                 android:text="@string/restart"
-                android:textSize="20sp" />
+                android:textSize="18sp" />
         </LinearLayout>
     </LinearLayout>
 

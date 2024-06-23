@@ -37,6 +37,7 @@ public class GameActivity extends AppCompatActivity {
     int[][] maps;//地图
     Point[] boxes;//方块
     Point[] nextboxes; //方块
+    int strokeWidth = 2;
     int boxSize;//方块大小
     final int TUBE = 8;//方块种类
     int boxType;//选择方块类型
@@ -97,7 +98,7 @@ public class GameActivity extends AppCompatActivity {
         @Override
         public void run() {
             if (!isPaused && moveBottom()) {
-                autoMoveHandler.postDelayed(this, 500 - speed * 50); // 500毫秒后再次执行，可以根据需要调整时间间隔
+                autoMoveHandler.postDelayed(this, 500 - speed * 50L); // 500毫秒后再次执行，可以根据需要调整时间间隔
             }
         }
     };
@@ -298,10 +299,9 @@ public class GameActivity extends AppCompatActivity {
     }
 
     public void initView() {//初始化视图
-
         linePaint = new Paint();//初始化线条画笔
-        linePaint.setColor(0xffa5af95);
-        linePaint.setStrokeWidth(3);
+        linePaint.setColor(0x80808000);
+        linePaint.setStrokeWidth(strokeWidth);
         linePaint.setAntiAlias(true);
 
         mapPaint = new Paint();
@@ -317,25 +317,33 @@ public class GameActivity extends AppCompatActivity {
             protected void onDraw(@NonNull Canvas canvas) {//重写游戏区域绘制
                 super.onDraw(canvas);
                 //地图辅助线
-                for (int x = 0; x < maps.length; x++)
+                for (int x = 0; x <= maps.length; x++)
                     canvas.drawLine(x * boxSize, 0, x * boxSize, view.getHeight(), linePaint);
-                for (int y = 0; y < maps[0].length; y++)
+                for (int y = 0; y <= maps[0].length; y++)
                     canvas.drawLine(0, y * boxSize, view.getWidth(), y * boxSize, linePaint);
                 //方块绘制
                 for (Point box : boxes) {
-                    canvas.drawRect(box.x * boxSize, box.y * boxSize, box.x * boxSize + boxSize, box.y * boxSize + boxSize, boxPaint);
+                    canvas.drawRect(box.x * boxSize + (float) strokeWidth / 2, // 稍微偏移以避免与边框重叠
+                            box.y * boxSize + (float) strokeWidth / 2,
+                            box.x * boxSize + boxSize - (float) strokeWidth / 2,
+                            box.y * boxSize + boxSize - (float) strokeWidth / 2,
+                            boxPaint);
                 }
-
                 for (int x = 0; x < maps.length; x++) {
                     for (int y = 0; y < maps[x].length; y++) {
                         int blockType = maps[x][y]; // 获取当前坐标处的方块类型编号
                         if (blockType > 0 && blockType < 8) {
-                            mapPaint.setColor(boxColors[blockType]); // 设置当前方块的颜色
-                            canvas.drawRect(x * boxSize, y * boxSize, x * boxSize + boxSize, y * boxSize + boxSize, mapPaint);
+                            // 设置填充颜色
+                            mapPaint.setColor(boxColors[blockType]);
+                            // 绘制填充（这会使用当前的填充颜色，但由于样式是FILL_AND_STROKE，所以边框也会被重绘）
+                            canvas.drawRect(x * boxSize + (float) strokeWidth / 2, // 稍微偏移以避免与边框重叠
+                                    y * boxSize + (float) strokeWidth / 2,
+                                    x * boxSize + boxSize - (float) strokeWidth / 2,
+                                    y * boxSize + boxSize - (float) strokeWidth / 2,
+                                    mapPaint);
                         }
                     }
                 }
-
             }
         };
         view.setLayoutParams(new FrameLayout.LayoutParams(xWidth, xHeight));
