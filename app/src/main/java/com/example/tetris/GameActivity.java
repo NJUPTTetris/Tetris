@@ -202,14 +202,21 @@ public class GameActivity extends AppCompatActivity {
             playSound(R.raw.sound_change);
             rotate();
         });
-        findViewById(R.id.arrow_down).setOnClickListener(v -> {
+        findViewById(R.id.arrow_little_down).setOnClickListener(v -> {
+            if (isPaused)
+                return;
+            Animation(v);
+            playSound(R.raw.sound_change);
+            move(0,2);
+        });//快速下降两格
+        findViewById(R.id.arrow_quick_down).setOnClickListener(v -> {
             if (isPaused)
                 return;
             Animation(v);
             playSound(R.raw.sound_down);
             while (moveBottom()) {
                 continue;
-            }//优化加速
+            }//快速下降到底
         });
 
         findViewById(R.id.btn_restart).setOnClickListener(v -> recreate());
@@ -514,7 +521,7 @@ public class GameActivity extends AppCompatActivity {
                 }
             case KeyEvent.KEYCODE_DPAD_DOWN:
             case KeyEvent.KEYCODE_S:
-                View downButton = findViewById(R.id.arrow_down);
+                View downButton = findViewById(R.id.arrow_little_down);
                 if (downButton != null) {
                     downButton.performClick(); // 模拟点击事件
                     return true; // 表示事件已被处理

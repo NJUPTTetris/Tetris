@@ -142,6 +142,16 @@
                 android:backgroundTint="#AA723A"
                 android:text="@string/restart"
                 android:textSize="18sp" />
+
+            <ImageView
+                android:id="@+id/arrow_quick_down"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_marginTop="16dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/arrow_little_down"
+                android:scaleType="centerInside"
+                android:src="@drawable/arrow_quick_down"/>
         </LinearLayout>
     </LinearLayout>
 
@@ -185,14 +195,14 @@
             app:srcCompat="@drawable/arrow_rotate" />
 
         <ImageButton
-            android:id="@+id/arrow_down"
+            android:id="@+id/arrow_little_down"
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:background="@android:color/transparent"
-            android:contentDescription="@string/arrow_down"
+            android:contentDescription="@string/arrow_little_down"
             android:scaleType="centerInside"
-            app:srcCompat="@drawable/arrow_down" />
+            app:srcCompat="@drawable/arrow_little_down" />
     </LinearLayout>
 </LinearLayout>

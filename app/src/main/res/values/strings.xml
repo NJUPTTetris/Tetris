@@ -13,7 +13,8 @@
     <string name="arrow_left">arrow left</string>
     <string name="arrow_tight">arrow tight</string>
     <string name="arrow_rotate">arrow rotate</string>
-    <string name="arrow_down">arrow down</string>
+    <string name="arrow_little_down">arrow_little_down</string>
+    <string name="arrow_quick_down">arrow_quick_down</string>
     <string name="nextbox">next box</string>
     <string name="speed">Speed</string>
     <string name="music">Music</string>
