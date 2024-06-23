@@ -138,25 +138,25 @@ public class GameActivity extends AppCompatActivity {
 
         switch (nextboxType) {
             case 1://粉碎男孩 Smashboy
-                nextboxes = new Point[]{new Point(4, 0), new Point(5, 0), new Point(4, 1), new Point(5, 1)};
+                nextboxes = new Point[]{new Point(4, 1), new Point(5, 1), new Point(4, 2), new Point(5, 2)};
                 break;
             case 2://橘色瑞克 Orange Ricky
-                nextboxes = new Point[]{new Point(5, 1), new Point(6, 0), new Point(4, 1), new Point(6, 1)};
+                nextboxes = new Point[]{new Point(5, 2), new Point(6, 1), new Point(4, 2), new Point(6, 2)};
                 break;
             case 3://罗德岛Z Rhode Island Z
-                nextboxes = new Point[]{new Point(5, 1), new Point(5, 0), new Point(6, 0), new Point(4, 1)};
+                nextboxes = new Point[]{new Point(5, 2), new Point(5, 1), new Point(6, 1), new Point(4, 2)};
                 break;
             case 4://小T Teewee
-                nextboxes = new Point[]{new Point(5, 1), new Point(5, 0), new Point(4, 1), new Point(6, 1)};
+                nextboxes = new Point[]{new Point(5, 2), new Point(5, 1), new Point(4, 2), new Point(6, 2)};
                 break;
             case 5://英雄 Hero
-                nextboxes = new Point[]{new Point(4, 0), new Point(3, 0), new Point(5, 0), new Point(6, 0)};
+                nextboxes = new Point[]{new Point(4, 1), new Point(3, 1), new Point(5, 1), new Point(6, 1)};
                 break;
             case 6://蓝色瑞克 Blue Ricky
-                nextboxes = new Point[]{new Point(5, 1), new Point(4, 0), new Point(4, 1), new Point(6, 1)};
+                nextboxes = new Point[]{new Point(5, 2), new Point(4, 1), new Point(4, 2), new Point(6, 2)};
                 break;
             case 7://克里夫蘭Z Cleveland Z
-                nextboxes = new Point[]{new Point(5, 1), new Point(5, 0), new Point(4, 0), new Point(6, 1)};
+                nextboxes = new Point[]{new Point(5, 2), new Point(5, 1), new Point(4, 1), new Point(6, 2)};
                 break;
         }
         boxPaint.setColor(boxColors[boxType]);
@@ -175,7 +175,10 @@ public class GameActivity extends AppCompatActivity {
         int boxSize = (int) (20 * getResources().getDisplayMetrics().density);
         // 在Canvas上绘制方块
         for (Point box : nextboxes) {
-            canvas.drawRect((box.x - 3) * boxSize, box.y * boxSize, (box.x - 2) * boxSize, (box.y + 1) * boxSize, nextboxPaint);
+            canvas.drawRect((box.x - 3) * boxSize + (float) strokeWidth / 2,
+                    (box.y - 1) * boxSize + (float) strokeWidth / 2,
+                    (box.x - 2) * boxSize - (float) strokeWidth / 2,
+                    box.y * boxSize - (float) strokeWidth / 2, nextboxPaint);
         }
         return bitmap;
     }
@@ -335,7 +338,7 @@ public class GameActivity extends AppCompatActivity {
                         if (blockType > 0 && blockType < 8) {
                             // 设置填充颜色
                             mapPaint.setColor(boxColors[blockType]);
-                            // 绘制填充（这会使用当前的填充颜色，但由于样式是FILL_AND_STROKE，所以边框也会被重绘）
+                            // 绘制填充
                             canvas.drawRect(x * boxSize + (float) strokeWidth / 2, // 稍微偏移以避免与边框重叠
                                     y * boxSize + (float) strokeWidth / 2,
                                     x * boxSize + boxSize - (float) strokeWidth / 2,
@@ -517,6 +520,12 @@ public class GameActivity extends AppCompatActivity {
                 View downButton = findViewById(R.id.arrow_down);
                 if (downButton != null) {
                     downButton.performClick(); // 模拟点击事件
+                    return true; // 表示事件已被处理
+                }
+            case KeyEvent.KEYCODE_SPACE:
+                View stopButton = findViewById(R.id.btn_stop);
+                if (stopButton != null) {
+                    stopButton.performClick(); // 模拟点击事件
                     return true; // 表示事件已被处理
                 }
         }
