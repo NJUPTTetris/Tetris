@@ -62,16 +62,15 @@ public class GameoverDialogFragment extends DialogFragment {
             public void onClick(View view) {
                 // 关闭DialogFragment
                 dismiss();
-                // 启动MainActivity
+
+                // 确保DialogFragment已经关闭后再启动MainActivity
                 if (getActivity() != null) {
-                    Intent intent = new Intent(getActivity(), MainActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
+                    getActivity().finish();
                 }
             }
         });
-        return builder
-                .setView(view)
-                .create();
+        AlertDialog dialog = builder.setView(view).create();
+        dialog.setCanceledOnTouchOutside(false);// 禁止通过点击对话框外部来关闭对话框
+        return dialog;
     }
 }
