@@ -46,6 +46,7 @@ public class GameActivity extends AppCompatActivity {
     int boxColor;
     //当前分数
     public int score;
+    //最高分
     public int scoremax;
     //游戏结束状态
     public boolean isOver;
@@ -415,12 +416,14 @@ public class GameActivity extends AppCompatActivity {
     //消行处理
     public int clearLine() {
         int lines = 0;
+        //从下到上循环遍历maps数组，从最后一行开始遍历
         for (int y = maps[0].length - 1; y > 0; y--) {
             // 消行判断
             if (checkLine(y)) {
                 deleteLine(y);
                 //从消掉的那一行重新遍历
                 y++;
+                //增加消行计数
                 lines++;
             }
         }
@@ -429,21 +432,29 @@ public class GameActivity extends AppCompatActivity {
 
     public boolean checkLine(int y) {
         //有一个不为1-7,则该行不能消除
+        //遍历maps数组，每个数组代表一行的方块状态
         for (int[] map : maps) {
-            if (map[y] == 0) return false;
+            //map[y]为空
+            if (map[y] == 0)
+                return false;
         }
         return true;
     }
 
     //执行消行
     public void deleteLine(int dy) {
+        //从消去的行开始，向上遍历每一行
         for (int y = dy; y > 0; y--) {
             try {
                 Thread.sleep(10); // 延时10毫秒
+                //调用Thread.sleep()期间线程被中断时抛出的异常
             } catch (InterruptedException e) {
+                //打印异常的堆栈跟踪信息到标准错误流
                 e.printStackTrace();
             }
+            //对于每一行，从左到右遍历每一列
             for (int x = 0; x < maps.length; x++) {
+                //将当前行的每个方块状态复制到它上面的行，实现行的下移
                 maps[x][y] = maps[x][y - 1];
             }
         }
