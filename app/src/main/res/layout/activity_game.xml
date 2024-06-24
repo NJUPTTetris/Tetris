@@ -169,6 +169,7 @@
             android:layout_marginEnd="8dp"
             android:background="@android:color/transparent"
             android:contentDescription="@string/arrow_left"
+
             android:scaleType="centerInside"
             android:src="@drawable/arrow_left" />
 
@@ -180,6 +181,7 @@
             android:layout_marginEnd="8dp"
             android:background="@android:color/transparent"
             android:contentDescription="@string/arrow_tight"
+
             android:scaleType="centerInside"
             app:srcCompat="@drawable/arrow_right" />
 
@@ -191,6 +193,7 @@
             android:layout_marginEnd="8dp"
             android:background="@android:color/transparent"
             android:contentDescription="@string/arrow_rotate"
+
             android:scaleType="centerInside"
             app:srcCompat="@drawable/arrow_rotate" />
 

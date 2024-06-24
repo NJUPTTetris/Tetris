@@ -13,17 +13,23 @@ import android.graphics.Point;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
+import android.os.SystemClock;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GestureDetectorCompat;
 
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class GameActivity extends AppCompatActivity {
     int speed;//速度
@@ -53,9 +59,22 @@ public class GameActivity extends AppCompatActivity {
     private TextView txtCurrentScore;
     private TextView txtHighScore;
     private boolean isPaused = false; // 控制游戏是否暂停
+    private AtomicBoolean isThreadRunning = new AtomicBoolean(false);
+    // 定义全局变量
+// 在类中添加 AtomicBoolean 来控制左右移动
+    private AtomicBoolean isPressedLeft = new AtomicBoolean(false);
+    private AtomicBoolean isPressedRight = new AtomicBoolean(false);
+    // 为每个长按操作创建独立的线程
+    private Thread leftMoveThread;
+    private Thread rightMoveThread;
     private Handler autoMoveHandler = new Handler(); // 用于自动下落的Handler
     private MediaPlayer bgMediaPlayer; // 背景音乐的 MediaPlayer
     private MediaPlayer soundEffectPlayer; // 短暂音效的 MediaPlayer
+    private GestureDetectorCompat gestureDetector;
+    // 创建一个Handler实例
+    private Handler handler = new Handler(Looper.getMainLooper());
+    // 定义成员变量来追踪长按状态
+    private boolean isLongPressing = false;
     int[] boxColors = {0, Color.parseColor("#C62828"), // 红色
             Color.parseColor("#D84315"), // 橙色
             Color.parseColor("#F9A825"), // 黄色
@@ -69,7 +88,6 @@ public class GameActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
-
         speed = getIntent().getIntExtra("speed", 0);
         isSwitchOnMusic = getIntent().getBooleanExtra("isSwitchOnMusic", true);//传入是否需要音乐
         isSwitchOnSoundEffect = getIntent().getBooleanExtra("isSwitchOnSoundEffect", true);//传入是否需要音效
@@ -120,6 +138,7 @@ public class GameActivity extends AppCompatActivity {
         autoMoveHandler.removeCallbacks(autoMoveRunnable); // 移除自动下落的Runnable
     }
 
+
     public void newBoxes() { //生成一个新的随机方块
         if (nextboxes == null) {
             nextBoxes();
@@ -132,11 +151,10 @@ public class GameActivity extends AppCompatActivity {
         Bitmap nextBlockBitmap = drawNextBlock(nextboxes);
         nextBlockView.setImageBitmap(nextBlockBitmap);
     }
-
     public void nextBoxes() {
         Random random = new Random();
-        nextboxType = random.nextInt(TUBE) + 1; // 生成 1 到 7 之间的随机数
 
+        nextboxType = random.nextInt(TUBE - 1) + 1; // 生成 1 到 7 之间的随机数
         switch (nextboxType) {
             case 1://粉碎男孩 Smashboy
                 nextboxes = new Point[]{new Point(4, 1), new Point(5, 1), new Point(4, 2), new Point(5, 2)};
@@ -186,18 +204,71 @@ public class GameActivity extends AppCompatActivity {
 
     public void initListener() {//初始化监听
         findViewById(R.id.arrow_left).setOnClickListener(v -> {
-            if (isPaused)
-                return;//如果暂停，禁用
-            Animation(v); // 调用封装的动画函数
-            playSound(R.raw.sound_change);// 调用播放音效的函数
-            move(-1, 0);
+            if (isLongPressing && !isPressedLeft.get()) {
+                move(-1, 0);
+            }else{
+                move(-1,0);
+            }
+            if (!isPaused) {
+                Animation(v); // 调用封装的动画函数
+                playSound(R.raw.sound_change); // 调用播放音效的函数
+            }
         });
+        findViewById(R.id.arrow_left).setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                if (!isPressedLeft.get()) {
+                    isPressedLeft.set(true);
+                    startMovingLeft();
+                }
+                isLongPressing = true; // 设置长按标志位为true
+                return true;
+            }
+        });
+        findViewById(R.id.arrow_right).setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                if (!isPressedRight.get()) {
+                    isPressedRight.set(true);
+                    startMovingRight();
+                }
+                isLongPressing = true; // 设置长按标志位为true
+                return true;
+            }
+        });
+// 同样的方式修改右侧的长按事件监听器
         findViewById(R.id.arrow_right).setOnClickListener(v -> {
-            if (isPaused)
-                return;
-            Animation(v);
-            playSound(R.raw.sound_change);
-            move(1, 0);
+            if (isLongPressing && !isPressedRight.get()) {
+                move(1, 0);
+            }else{
+                move(1,0);
+            }
+            if (!isPaused) {
+                Animation(v); // 调用封装的动画函数
+                playSound(R.raw.sound_change); // 调用播放音效的函数
+            }
+        });
+        // 在长按释放时更新长按状态
+        findViewById(R.id.arrow_left).setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL) {
+                    isLongPressing = false; // 长按结束，更新长按状态为false
+                    isPressedLeft.set(false);
+                }
+                return false;
+            }
+        });
+
+        findViewById(R.id.arrow_right).setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL) {
+                    isLongPressing = false; // 长按结束，更新长按状态为false
+                    isPressedRight.set(false);
+                }
+                return false;
+            }
         });
         findViewById(R.id.arrow_rotate).setOnClickListener(v -> {
             if (isPaused)
@@ -222,7 +293,6 @@ public class GameActivity extends AppCompatActivity {
                 continue;
             }//快速下降到底
         });
-
         findViewById(R.id.btn_restart).setOnClickListener(v -> recreate());
         final Button btnStop = findViewById(R.id.btn_stop);
         findViewById(R.id.btn_stop).setOnClickListener(new View.OnClickListener() {
@@ -245,7 +315,58 @@ public class GameActivity extends AppCompatActivity {
             }
         });
     }
+    private void startMovingLeft() {
+        stopMovingRight();
+        // 创建一个Runnable来处理连续的左移
+        final Runnable moveLeftRunnable = new Runnable() {
+            @Override
+            public void run() {
+                move(-1, 0);
+                if (isPressedLeft.get()) {
+                    handler.postDelayed(this, 50); // 每隔50毫秒移动一次
+                }
+            }
+        };
+        handler.post(moveLeftRunnable);
+    }
 
+    private void startMovingRight() {
+        stopMovingLeft();
+        // 创建一个Runnable来处理连续的右移
+        final Runnable moveRightRunnable = new Runnable() {
+            @Override
+            public void run() {
+                move(1, 0);
+                if (isPressedRight.get()) {
+                    handler.postDelayed(this, 50); // 每隔50毫秒移动一次
+                }
+            }
+        };
+        handler.post(moveRightRunnable);
+    }
+    private void stopMovingLeft() {
+        isPressedLeft.set(false);
+        handler.removeCallbacksAndMessages(null); // 清除所有相关的回调和消息
+    }
+
+    private void stopMovingRight() {
+        isPressedRight.set(false);
+        handler.removeCallbacksAndMessages(null); // 清除所有相关的回调和消息
+    }
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_UP) {
+            if (leftMoveThread != null && leftMoveThread.isAlive()) {
+                stopMovingLeft();
+            }
+            if (rightMoveThread != null && rightMoveThread.isAlive()) {
+                stopMovingRight();
+            }
+            isPressedLeft.set(false); // 确保左键的状态被重置
+            isPressedRight.set(false); // 确保右键的状态被重置
+        }
+        return super.onTouchEvent(event);
+    }
     //下落
     public boolean moveBottom() {
         //1.移动成功 不作处理
@@ -268,7 +389,6 @@ public class GameActivity extends AppCompatActivity {
         isOver = checkOver();
         return false;
     }
-
     public boolean move(int x, int y) {//移动
         for (Point box : boxes) {
             if (checkBoundary(box.x + x, box.y + y)) return false;
