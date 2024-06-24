@@ -126,21 +126,21 @@
             </LinearLayout>
 
             <Button
-                android:id="@+id/btn_stop"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:backgroundTint="#AA723A"
-                android:text="@string/stop"
-                android:textSize="18sp" />
-
-            <Button
                 android:id="@+id/btn_restart"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:backgroundTint="#AA723A"
                 android:text="@string/restart"
+                android:textSize="18sp" />
+
+            <Button
+                android:id="@+id/btn_stop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:backgroundTint="#AA723A"
+                android:text="@string/stop"
                 android:textSize="18sp" />
 
             <ImageView
@@ -151,7 +151,7 @@
                 android:background="@android:color/transparent"
                 android:contentDescription="@string/arrow_little_down"
                 android:scaleType="centerInside"
-                android:src="@drawable/arrow_quick_down"/>
+                android:src="@drawable/arrow_quick_down" />
         </LinearLayout>
     </LinearLayout>
 

@@ -14,6 +14,7 @@ import androidx.fragment.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -40,8 +41,8 @@ public class GameoverDialogFragment extends DialogFragment {
         TextView current_score = view.findViewById(R.id.current_score);
         ProgressBar progressBar_score = view.findViewById(R.id.progressBar_score);
         TextView text_highest = view.findViewById(R.id.text_highest);
-        Button btn_play_again = view.findViewById(R.id.btn_play_again);
-
+        ImageButton btn_play_again = view.findViewById(R.id.btn_play_again);
+        ImageButton btn_home = view.findViewById(R.id.btn_home);
         Drawable progressDrawable = ContextCompat.getDrawable(requireActivity(), R.drawable.blue_progress);
         progressBar_score.setProgressDrawable(progressDrawable);
         Bundle args = getArguments();
@@ -58,6 +59,16 @@ public class GameoverDialogFragment extends DialogFragment {
         }
 
         btn_play_again.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // 关闭DialogFragment
+                dismiss();
+                if (getActivity() != null) {
+                    getActivity().recreate();
+                }
+            }
+        });
+        btn_home.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // 关闭DialogFragment

@@ -39,7 +39,7 @@ public class GameActivity extends AppCompatActivity {
     Point[] nextboxes; //方块
     int strokeWidth = 2;
     int boxSize;//方块大小
-    final int TUBE = 8;//方块种类
+    final int TUBE = 7;//方块种类
     int boxType;//选择方块类型
     int nextboxType;//选择方块类型
     // 新增一个变量来存储下一个方块的类型
@@ -134,7 +134,7 @@ public class GameActivity extends AppCompatActivity {
 
     public void nextBoxes() {
         Random random = new Random();
-        nextboxType = random.nextInt(TUBE - 1) + 1; // 生成 1 到 7 之间的随机数
+        nextboxType = random.nextInt(TUBE) + 1; // 生成 1 到 7 之间的随机数
 
         switch (nextboxType) {
             case 1://粉碎男孩 Smashboy
@@ -210,7 +210,7 @@ public class GameActivity extends AppCompatActivity {
                 return;
             Animation(v);
             playSound(R.raw.sound_change);
-            move(0,2);
+            move(0, 2);
         });//快速下降两格
         findViewById(R.id.arrow_quick_down).setOnClickListener(v -> {
             if (isPaused)
