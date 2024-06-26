@@ -452,6 +452,7 @@ public class GameActivity extends AppCompatActivity {
                     canvas.drawLine(x * boxSize, 0, x * boxSize, view.getHeight(), linePaint);
                 for (int y = 0; y <= maps[0].length; y++)
                     canvas.drawLine(0, y * boxSize, view.getWidth(), y * boxSize, linePaint);
+
                 //方块绘制
                 for (Point box : boxes) {
                     canvas.drawRect(box.x * boxSize + (float) strokeWidth / 2, // 稍微偏移以避免与边框重叠
@@ -460,6 +461,7 @@ public class GameActivity extends AppCompatActivity {
                             box.y * boxSize + boxSize - (float) strokeWidth / 2,
                             boxPaint);
                 }
+                //堆积绘制
                 for (int x = 0; x < maps.length; x++) {
                     for (int y = 0; y < maps[x].length; y++) {
                         int blockType = maps[x][y]; // 获取当前坐标处的方块类型编号
