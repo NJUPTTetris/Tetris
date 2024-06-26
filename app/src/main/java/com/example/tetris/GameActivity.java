@@ -406,7 +406,7 @@ public class GameActivity extends AppCompatActivity {
     }
 
     public void rotate() {//顺时针旋转90
-        if (boxType == 0) return;
+        if (boxType == 1) return;
         for (Point box : boxes) {//笛卡尔旋转公式
             int checkX = -box.y + boxes[0].y + boxes[0].x;
             int checkY = box.x - boxes[0].x + boxes[0].y;
